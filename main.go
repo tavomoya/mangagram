@@ -42,4 +42,5 @@ func main() {
 		bot.Send(m.Sender, "Tu mensaje fue: "+m.Text)
 	})
 
+	bot.Start()
 }
