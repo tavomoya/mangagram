@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	tb "gopkg.in/tucnak/telebot.v2"
 	"log"
+	"mangagram/actions"
 	"os"
+
+	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 func main() {
@@ -39,8 +41,52 @@ func main() {
 
 	bot.Handle("/manga", func(m *tb.Message) {
 		fmt.Println("The message received is ", m.Text)
-		bot.Send(m.Sender, "Tu mensaje fue: "+m.Text)
+
+		if m.Text == "" {
+			bot.Send(m.Sender, "No manga name supplied")
+		}
+
+		res := actions.QueryManga(m.Text)
+		if res == nil {
+			bot.Send(m.Sender, "No manga found with name: "+m.Text)
+		}
+
+		replyKeys := [][]tb.ReplyButton{}
+
+		for _, manga := range res.Suggestions {
+			replyBtn := []tb.ReplyButton{
+				{
+					Text: manga.Value,
+				},
+			}
+
+			replyKeys = append(replyKeys, replyBtn)
+		}
+
+		bot.Send(m.Sender, "These are the manga I found ", &tb.ReplyMarkup{
+			ReplyKeyboard: replyKeys,
+		})
 	})
 
 	bot.Start()
+
+	// Testing server
+
+	// router := mux.NewRouter()
+
+	// router.HandleFunc("/manga/{name}", func(w http.ResponseWriter, r *http.Request) {
+	// 	mangaName, _ := url.QueryUnescape(mux.Vars(r)["name"])
+	// 	log.Println("The name: ", mangaName)
+	// 	res := actions.QueryManga(mangaName)
+	// 	if res == nil {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		return
+	// 	}
+
+	// 	w.Header().Set("Content-Type", "application/json")
+	// 	w.WriteHeader(http.StatusOK)
+	// 	json.NewEncoder(w).Encode(&res)
+	// }).Methods("GET")
+
+	// http.ListenAndServe(listen, handlers.CombinedLoggingHandler(os.Stdout, router))
 }
