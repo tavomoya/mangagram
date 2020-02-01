@@ -64,6 +64,11 @@ func main() {
 				Text: manga.Value,
 			}
 
+			bot.Handle(replyBtn, func(bm *tb.Message) {
+				mangaURL := fmt.Sprintf(actions.ViewMangaURL, manga.Data)
+				bot.Send(bm.Sender, mangaURL)
+			})
+
 			replyKeys = append(replyKeys, replyBtn)
 		}
 
@@ -71,8 +76,7 @@ func main() {
 
 		fmt.Println("Keyboard: ", replyKeyboard)
 		bot.Send(m.Sender, "These are the manga I found ", &tb.ReplyMarkup{
-			ReplyKeyboard:   replyKeyboard,
-			OneTimeKeyboard: true,
+			ReplyKeyboard: replyKeyboard,
 		})
 	})
 

@@ -10,6 +10,7 @@ import (
 )
 
 const ApiURL string = "https://mangareader.pw/search?query=%s"
+const ViewMangaURL = "https://mangareader.pw/manga/%s"
 
 type ApiQuerySuggestions struct {
 	Suggestions []MangaSuggestion `json:"suggestions"`
