@@ -64,7 +64,7 @@ func main() {
 				Text: manga.Value,
 			}
 
-			bot.Handle(replyBtn, func(bm *tb.Message) {
+			bot.Handle(&replyBtn, func(bm *tb.Message) {
 				mangaURL := fmt.Sprintf(actions.ViewMangaURL, manga.Data)
 				bot.Send(bm.Sender, mangaURL)
 			})
