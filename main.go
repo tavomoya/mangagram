@@ -5,6 +5,7 @@ import (
 	"log"
 	"mangagram/actions"
 	"os"
+	"strings"
 
 	tb "gopkg.in/tucnak/telebot.v2"
 )
@@ -42,13 +43,15 @@ func main() {
 	bot.Handle("/manga", func(m *tb.Message) {
 		fmt.Println("The message received is ", m.Text)
 
-		if m.Text == "" {
+		name := strings.Replace(m.Text, "/manga ", "", 1)
+
+		if name == "" {
 			bot.Send(m.Sender, "No manga name supplied")
 		}
 
-		res := actions.QueryManga(m.Text)
+		res := actions.QueryManga(name)
 		if res == nil {
-			bot.Send(m.Sender, "No manga found with name: "+m.Text)
+			bot.Send(m.Sender, "No manga found with name: "+name)
 		}
 
 		replyKeyboard := [][]tb.ReplyButton{}
