@@ -51,20 +51,25 @@ func main() {
 			bot.Send(m.Sender, "No manga found with name: "+m.Text)
 		}
 
-		replyKeys := [][]tb.ReplyButton{}
+		replyKeyboard := [][]tb.ReplyButton{}
+		replyKeys := []tb.ReplyButton{}
 
 		for _, manga := range res.Suggestions {
-			replyBtn := []tb.ReplyButton{
-				{
-					Text: manga.Value,
-				},
+			fmt.Println("The manga result is: ", manga.Data, manga.Value)
+
+			replyBtn := tb.ReplyButton{
+				Text: manga.Value,
 			}
 
 			replyKeys = append(replyKeys, replyBtn)
 		}
 
+		replyKeyboard = append(replyKeyboard, replyKeys)
+
+		fmt.Println("Keyboard: ", replyKeyboard)
 		bot.Send(m.Sender, "These are the manga I found ", &tb.ReplyMarkup{
-			ReplyKeyboard: replyKeys,
+			ReplyKeyboard:   replyKeyboard,
+			OneTimeKeyboard: true,
 		})
 	})
 
