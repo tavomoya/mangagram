@@ -49,7 +49,7 @@ func main() {
 			bot.Send(m.Sender, "No manga name supplied")
 		}
 
-		feed := actions.NewMangaInterface(1)
+		feed := actions.NewMangaInterface(2)
 
 		res := feed.QueryManga(name)
 		if res == nil {
