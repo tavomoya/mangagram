@@ -1,27 +1,28 @@
-package actions
+package mangareader
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"mangagram/models"
 	"net/http"
 	"net/url"
 )
 
-const ApiURL string = "https://mangareader.pw/search?query=%s"
-const ViewMangaURL = "https://mangareader.pw/manga/%s"
-
-type ApiQuerySuggestions struct {
-	Suggestions []MangaSuggestion `json:"suggestions"`
+type MangaReader struct {
+	ApiURL       string
+	ViewMangaURL string
 }
 
-type MangaSuggestion struct {
-	Data  string `json:"data"`
-	Value string `json:"value"`
+func NewMangaReader() *MangaReader {
+	return &MangaReader{
+		ApiURL:       "https://mangareader.pw/search?query=%s",
+		ViewMangaURL: "https://mangareader.pw/search?query=%s",
+	}
 }
 
-func QueryManga(name string) *ApiQuerySuggestions {
+func (m *MangaReader) QueryManga(name string) *models.ApiQuerySuggestions {
 
 	if name == "" {
 		return nil
@@ -29,7 +30,7 @@ func QueryManga(name string) *ApiQuerySuggestions {
 
 	escapedName := url.QueryEscape(name)
 
-	path := fmt.Sprintf(ApiURL, escapedName)
+	path := fmt.Sprintf(m.ApiURL, escapedName)
 
 	res, err := http.Get(path)
 	if err != nil {
@@ -48,7 +49,7 @@ func QueryManga(name string) *ApiQuerySuggestions {
 		return nil
 	}
 
-	suggestions := new(ApiQuerySuggestions)
+	suggestions := new(models.ApiQuerySuggestions)
 
 	err = json.Unmarshal(body, &suggestions)
 	if err != nil {
@@ -57,4 +58,8 @@ func QueryManga(name string) *ApiQuerySuggestions {
 	}
 
 	return suggestions
+}
+
+func (m *MangaReader) ViewManga() string {
+	return m.ViewMangaURL
 }

@@ -49,7 +49,9 @@ func main() {
 			bot.Send(m.Sender, "No manga name supplied")
 		}
 
-		res := actions.QueryManga(name)
+		feed := actions.NewMangaInterface(1)
+
+		res := feed.QueryManga(name)
 		if res == nil {
 			bot.Send(m.Sender, "No manga found with name: "+name)
 		}
@@ -65,7 +67,7 @@ func main() {
 			}
 
 			bot.Handle(&replyBtn, func(bm *tb.Message) {
-				mangaURL := fmt.Sprintf(actions.ViewMangaURL, manga.Data)
+				mangaURL := fmt.Sprintf(feed.ViewManga(), manga.Data)
 				bot.Send(bm.Sender, mangaURL)
 			})
 
