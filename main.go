@@ -14,7 +14,7 @@ func main() {
 	log.Println("Started Manga Gram bot")
 
 	port := os.Getenv("PORT")
-	publicUrl := os.Getenv("PUBLIC_URL")
+	publicURL := os.Getenv("PUBLIC_URL")
 	token := os.Getenv("TOKEN")
 
 	if port == "" {
@@ -25,7 +25,7 @@ func main() {
 
 	webhook := &tb.Webhook{
 		Listen:   listen,
-		Endpoint: &tb.WebhookEndpoint{PublicURL: publicUrl},
+		Endpoint: &tb.WebhookEndpoint{PublicURL: publicURL},
 	}
 
 	settings := tb.Settings{

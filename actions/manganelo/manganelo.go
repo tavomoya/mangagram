@@ -11,11 +11,17 @@ import (
 	strip "github.com/grokify/html-strip-tags-go"
 )
 
+// Manganelo is a struct used to attach
+// all functionality available within this
+// manga source.
 type Manganelo struct {
 	ApiURL       string
 	ViewMangaURL string
 }
 
+// NewManganelo function returns a pointer to
+// a Manganelo struct that can be used to call
+// all of its methods.
 func NewManganelo() *Manganelo {
 	return &Manganelo{
 		ApiURL:       "https://manganelo.com/getstorysearchjson",
@@ -23,10 +29,15 @@ func NewManganelo() *Manganelo {
 	}
 }
 
+// ViewManga method returns a string with
+// the Manga's URL.
 func (m *Manganelo) ViewManga() string {
 	return m.ViewMangaURL
 }
 
+// QueryManga method receives a string that refers to the Manga name, it then
+// amkes a call to the Manganelo API, and with the results it returns a
+// ApiQuerySuggestions struct.
 func (m *Manganelo) QueryManga(name string) *models.ApiQuerySuggestions {
 
 	if name == "" {
