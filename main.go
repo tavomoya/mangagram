@@ -56,30 +56,21 @@ func main() {
 			bot.Send(m.Sender, "No manga found with name: "+name)
 		}
 
-		replyKeyboard := [][]tb.ReplyButton{}
-		replyKeys := []tb.ReplyButton{}
+		msg := "This is what I found:  "
+		mangas := make([]string, len(res.Suggestions))
 
 		for _, manga := range res.Suggestions {
 			fmt.Println("The manga result is: ", manga.Data, manga.Value)
 
-			replyBtn := tb.ReplyButton{
-				Text: manga.Value,
-			}
+			m := fmt.Sprintf("%s - %s", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data))
 
-			bot.Handle(&replyBtn, func(bm *tb.Message) {
-				mangaURL := fmt.Sprintf(feed.ViewManga(), manga.Data)
-				bot.Send(bm.Sender, mangaURL)
-			})
-
-			replyKeys = append(replyKeys, replyBtn)
+			mangas = append(mangas, m)
 		}
 
-		replyKeyboard = append(replyKeyboard, replyKeys)
+		msg = fmt.Sprintf("%s  %s", msg, strings.Join(mangas, "  "))
 
-		fmt.Println("Keyboard: ", replyKeyboard)
-		bot.Send(m.Sender, "These are the manga I found ", &tb.ReplyMarkup{
-			ReplyKeyboard: replyKeyboard,
-		})
+		fmt.Println("Msg: ", msg)
+		bot.Send(m.Sender, msg, tb.ModeMarkdown)
 	})
 
 	bot.Start()
