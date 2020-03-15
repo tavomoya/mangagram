@@ -67,7 +67,7 @@ func main() {
 			mangas[i] = t
 		}
 
-		msg = fmt.Sprintf("%s  %s", msg, strings.Join(mangas, "\n"))
+		msg = fmt.Sprintf("%s %s", msg, strings.Join(mangas, "\n"))
 
 		fmt.Println("Msg: ", msg)
 		_, err := bot.Send(m.Sender, msg, tb.ModeHTML, tb.NoPreview)
