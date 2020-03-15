@@ -70,7 +70,10 @@ func main() {
 		msg = fmt.Sprintf("%s  %s", msg, strings.Join(mangas, ""))
 
 		fmt.Println("Msg: ", msg)
-		bot.Send(m.Sender, msg, tb.ModeHTML)
+		_, err := bot.Send(m.Sender, msg, tb.ModeHTML)
+		if err != nil {
+			log.Println("There was an error sending the message: ", err.Error())
+		}
 	})
 
 	bot.Start()
