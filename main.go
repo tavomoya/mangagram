@@ -56,30 +56,24 @@ func main() {
 			bot.Send(m.Sender, "No manga found with name: "+name)
 		}
 
-		replyKeyboard := [][]tb.ReplyButton{}
-		replyKeys := []tb.ReplyButton{}
+		msg := "<b>This is what I found:</b>\n\n"
+		mangas := make([]string, len(res.Suggestions))
 
-		for _, manga := range res.Suggestions {
+		for i, manga := range res.Suggestions {
 			fmt.Println("The manga result is: ", manga.Data, manga.Value)
 
-			replyBtn := tb.ReplyButton{
-				Text: manga.Value,
-			}
+			t := fmt.Sprintf("%s - <a href='%s'>%s</a>", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data), manga.Value)
 
-			bot.Handle(&replyBtn, func(bm *tb.Message) {
-				mangaURL := fmt.Sprintf(feed.ViewManga(), manga.Data)
-				bot.Send(bm.Sender, mangaURL)
-			})
-
-			replyKeys = append(replyKeys, replyBtn)
+			mangas[i] = t
 		}
 
-		replyKeyboard = append(replyKeyboard, replyKeys)
+		msg = fmt.Sprintf("%s %s", msg, strings.Join(mangas, "\n"))
 
-		fmt.Println("Keyboard: ", replyKeyboard)
-		bot.Send(m.Sender, "These are the manga I found ", &tb.ReplyMarkup{
-			ReplyKeyboard: replyKeyboard,
-		})
+		fmt.Println("Msg: ", msg)
+		_, err := bot.Send(m.Sender, msg, tb.ModeHTML, tb.NoPreview)
+		if err != nil {
+			log.Println("There was an error sending the message: ", err.Error())
+		}
 	})
 
 	bot.Start()
