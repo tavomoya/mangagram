@@ -56,13 +56,13 @@ func main() {
 			bot.Send(m.Sender, "No manga found with name: "+name)
 		}
 
-		msg := "<b>This is what I found:</b> <br/>"
+		msg := "<h1>This is what I found:</h1>"
 		mangas := make([]string, len(res.Suggestions))
 
 		for i, manga := range res.Suggestions {
 			fmt.Println("The manga result is: ", manga.Data, manga.Value)
 
-			t := fmt.Sprintf("<p>%s</p> - %s <br/>", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data))
+			t := fmt.Sprintf("<p>%s</p> - <a href='%s'>%s</a>", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data), manga.Value)
 
 			mangas[i] = t
 		}
