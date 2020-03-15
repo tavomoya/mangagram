@@ -7,6 +7,7 @@ import (
 	"mangagram/models"
 	"net/http"
 	"net/url"
+	"strings"
 
 	strip "github.com/grokify/html-strip-tags-go"
 )
@@ -74,7 +75,7 @@ func (m *Manganelo) QueryManga(name string) *models.ApiQuerySuggestions {
 		s := models.MangaSuggestions{}
 
 		s.Data = manga.IDEncode
-		s.Value = strip.StripTags(manga.Name)
+		s.Value = strings.Title(strip.StripTags(manga.Name))
 
 		suggestions.Suggestions = append(suggestions.Suggestions, s)
 	}
