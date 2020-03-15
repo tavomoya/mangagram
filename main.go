@@ -56,7 +56,7 @@ func main() {
 			bot.Send(m.Sender, "No manga found with name: "+name)
 		}
 
-		msg := "<b>This is what I found:</b> \n\n"
+		msg := "<b>This is what I found:</b>\n\n"
 		mangas := make([]string, len(res.Suggestions))
 
 		for i, manga := range res.Suggestions {
