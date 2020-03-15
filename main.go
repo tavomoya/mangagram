@@ -59,12 +59,12 @@ func main() {
 		msg := "<b>This is what I found:</b> <br/>"
 		mangas := make([]string, len(res.Suggestions))
 
-		for _, manga := range res.Suggestions {
+		for i, manga := range res.Suggestions {
 			fmt.Println("The manga result is: ", manga.Data, manga.Value)
 
-			m := fmt.Sprintf("<p>%s</p> - %s <br/>", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data))
+			t := fmt.Sprintf("<p>%s</p> - %s <br/>", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data))
 
-			mangas = append(mangas, m)
+			mangas[i] = t
 		}
 
 		msg = fmt.Sprintf("%s  %s", msg, strings.Join(mangas, ""))
