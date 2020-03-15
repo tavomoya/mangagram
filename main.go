@@ -56,7 +56,7 @@ func main() {
 			bot.Send(m.Sender, "No manga found with name: "+name)
 		}
 
-		msg := "<b>This is what I found:</b>"
+		msg := "<b>This is what I found:</b>  \n"
 		mangas := make([]string, len(res.Suggestions))
 
 		for i, manga := range res.Suggestions {
@@ -67,7 +67,7 @@ func main() {
 			mangas[i] = t
 		}
 
-		msg = fmt.Sprintf("%s  %s", msg, strings.Join(mangas, ""))
+		msg = fmt.Sprintf("%s  %s", msg, strings.Join(mangas, " \n"))
 
 		fmt.Println("Msg: ", msg)
 		_, err := bot.Send(m.Sender, msg, tb.ModeHTML)
