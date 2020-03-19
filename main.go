@@ -77,7 +77,7 @@ func main() {
 	})
 
 	bot.Handle("/subscribe", func(m *tb.Message) {
-
+		fmt.Println("This is the subscribe command", m.Text)
 		mangaQuery := strings.Replace(m.Text, "/manga ", "", 1)
 
 		if mangaQuery == "" {
