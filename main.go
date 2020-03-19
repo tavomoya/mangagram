@@ -101,7 +101,7 @@ func main() {
 			bot.Send(m.Sender, "Succesfully subscribed to "+mangaQuery)
 		}
 
-		msg := "<b>Select the manga you want to subscribe to:<b>\n"
+		msg := "Select the manga you want to subscribe to:\n"
 
 		inlineKb := [][]tb.InlineButton{}
 		inlineKeys := []tb.InlineButton{}
@@ -129,7 +129,7 @@ func main() {
 		fmt.Println("Final message and keyboard: ", msg, inlineKb)
 		bot.Send(m.Sender, msg, &tb.ReplyMarkup{
 			InlineKeyboard: inlineKb,
-		}, tb.ModeHTML)
+		})
 	})
 
 	bot.Start()
