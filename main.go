@@ -107,7 +107,7 @@ func main() {
 		inlineKeys := []tb.InlineButton{}
 
 		for _, item := range res.Suggestions {
-
+			fmt.Println("The manga iten: ", item)
 			inlineBtn := tb.InlineButton{
 				Text:   item.Value,
 				Unique: item.Data,
@@ -120,11 +120,13 @@ func main() {
 				})
 			})
 
+			fmt.Println("Inline btns: ", inlineBtn)
 			inlineKeys = append(inlineKeys, inlineBtn)
 		}
 
 		inlineKb = append(inlineKb, inlineKeys)
 
+		fmt.Println("Final message and keyboard: ", msg, inlineKb)
 		bot.Send(m.Sender, msg, &tb.ReplyMarkup{
 			InlineKeyboard: inlineKb,
 		}, tb.ModeHTML)
