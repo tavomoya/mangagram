@@ -67,13 +67,67 @@ func main() {
 			mangas[i] = t
 		}
 
-		msg = fmt.Sprintf("%s %s", msg, strings.Join(mangas, "\n"))
+		msg = fmt.Sprintf("%s%s", msg, strings.Join(mangas, "\n"))
 
 		fmt.Println("Msg: ", msg)
 		_, err := bot.Send(m.Sender, msg, tb.ModeHTML, tb.NoPreview)
 		if err != nil {
 			log.Println("There was an error sending the message: ", err.Error())
 		}
+	})
+
+	bot.Handle("/subscribe", func(m *tb.Message) {
+
+		mangaQuery := strings.Replace(m.Text, "/manga ", "", 1)
+
+		if mangaQuery == "" {
+			msg := `
+					This command allows you to subscribe to manga alerts: \n
+
+					/subscribe Bleach
+			`
+			bot.Send(m.Sender, msg)
+		}
+
+		feed := actions.NewMangaInterface(2)
+
+		res := feed.QueryManga(mangaQuery)
+		if res == nil {
+			bot.Send(m.Sender, "No Manga found with your criteria")
+		}
+
+		if len(res.Suggestions) == 1 {
+			fmt.Println("Subscribing user: ", m.Sender.FirstName)
+			bot.Send(m.Sender, "Succesfully subscribed to "+mangaQuery)
+		}
+
+		msg := "<b>Select the manga you want to subscribe to:<b>\n"
+
+		inlineKb := [][]tb.InlineButton{}
+		inlineKeys := []tb.InlineButton{}
+
+		for _, item := range res.Suggestions {
+
+			inlineBtn := tb.InlineButton{
+				Text:   item.Value,
+				Unique: item.Data,
+			}
+
+			bot.Handle(&inlineBtn, func(btnCb *tb.Callback) {
+				fmt.Println("Subscribing user: ", btnCb.Sender.FirstName)
+				bot.Respond(btnCb, &tb.CallbackResponse{
+					Text: "Succesfully subscribed to " + mangaQuery,
+				})
+			})
+
+			inlineKeys = append(inlineKeys, inlineBtn)
+		}
+
+		inlineKb = append(inlineKb, inlineKeys)
+
+		bot.Send(m.Sender, msg, &tb.ReplyMarkup{
+			InlineKeyboard: inlineKb,
+		}, tb.ModeHTML)
 	})
 
 	bot.Start()
