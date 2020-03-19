@@ -104,27 +104,27 @@ func main() {
 		msg := "Select the manga you want to subscribe to:\n"
 
 		inlineKb := [][]tb.InlineButton{}
-		inlineKeys := []tb.InlineButton{}
 
 		for _, item := range res.Suggestions {
 			fmt.Println("The manga iten: ", item)
-			inlineBtn := tb.InlineButton{
-				Text:   item.Value,
-				Unique: item.Data,
+			inlineBtn := []tb.InlineButton{
+				tb.InlineButton{
+					Text:   item.Value,
+					Unique: item.Data,
+				},
 			}
 
-			bot.Handle(&inlineBtn, func(btnCb *tb.Callback) {
+			bot.Handle(&inlineBtn[0], func(btnCb *tb.Callback) {
 				fmt.Println("Subscribing user: ", btnCb.Sender.FirstName)
 				bot.Respond(btnCb, &tb.CallbackResponse{
-					Text: "Succesfully subscribed to " + mangaQuery,
+					Text:      "Succesfully subscribed to " + mangaQuery,
+					ShowAlert: true,
 				})
 			})
 
 			fmt.Println("Inline btns: ", inlineBtn)
-			inlineKeys = append(inlineKeys, inlineBtn)
+			inlineKb = append(inlineKb, inlineBtn)
 		}
-
-		inlineKb = append(inlineKb, inlineKeys)
 
 		fmt.Println("Final message and keyboard: ", msg, inlineKb)
 		bot.Send(m.Sender, msg, &tb.ReplyMarkup{
