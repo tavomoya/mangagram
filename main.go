@@ -46,34 +46,76 @@ func main() {
 		name := strings.Replace(m.Text, "/manga ", "", 1)
 
 		if name == "" {
-			bot.Send(m.Sender, "No manga name supplied")
+			bot.Send(m.Sender, "<b>No manga name supplied</b>", tb.ModeHTML)
 		}
 
 		feed := actions.NewMangaInterface(2)
 
 		res := feed.QueryManga(name)
 		if res == nil {
-			bot.Send(m.Sender, "No manga found with name: "+name)
+			bot.Send(m.Sender, "No Manga found with your criteria")
 		}
 
-		msg := "<b>This is what I found:</b>\n\n"
-		mangas := make([]string, len(res.Suggestions))
+		msg := "These are the manga I found:\n"
 
-		for i, manga := range res.Suggestions {
-			fmt.Println("The manga result is: ", manga.Data, manga.Value)
+		inlineKb := [][]tb.InlineButton{}
 
-			t := fmt.Sprintf("%s - <a href='%s'>%s</a>", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data), manga.Value)
+		for _, item := range res.Suggestions {
+			fmt.Println("The manga iten: ", item)
+			inlineBtn := []tb.InlineButton{
+				tb.InlineButton{
+					Text:   item.Value + " 📖",
+					Unique: item.Data,
+					URL:    fmt.Sprintf(feed.ViewManga(), item.Data),
+				},
+				tb.InlineButton{
+					Text:   "Subscribe" + " 🔔",
+					Unique: item.Data + "_sub",
+				},
+			}
 
-			mangas[i] = t
+			bot.Handle(&inlineBtn[1], func(btnCb *tb.Callback) {
+				fmt.Println("Subscribing user: ", btnCb.Sender.FirstName)
+				bot.Respond(btnCb, &tb.CallbackResponse{
+					Text:      "Succesfully subscribed to " + item.Value,
+					ShowAlert: true,
+				})
+			})
+
+			fmt.Println("Inline btns: ", inlineBtn)
+			inlineKb = append(inlineKb, inlineBtn)
 		}
 
-		msg = fmt.Sprintf("%s%s", msg, strings.Join(mangas, "\n"))
+		fmt.Println("Final message and keyboard: ", msg, inlineKb)
+		bot.Send(m.Sender, msg, &tb.ReplyMarkup{
+			InlineKeyboard: inlineKb,
+		})
 
-		fmt.Println("Msg: ", msg)
-		_, err := bot.Send(m.Sender, msg, tb.ModeHTML, tb.NoPreview)
-		if err != nil {
-			log.Println("There was an error sending the message: ", err.Error())
-		}
+		// feed := actions.NewMangaInterface(2)
+
+		// res := feed.QueryManga(name)
+		// if res == nil {
+		// 	bot.Send(m.Sender, "No manga found with name: "+name)
+		// }
+
+		// msg := "<b>This is what I found:</b>\n\n"
+		// mangas := make([]string, len(res.Suggestions))
+
+		// for i, manga := range res.Suggestions {
+		// 	fmt.Println("The manga result is: ", manga.Data, manga.Value)
+
+		// 	t := fmt.Sprintf("%s - <a href='%s'>%s</a>", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data), manga.Value)
+
+		// 	mangas[i] = t
+		// }
+
+		// msg = fmt.Sprintf("%s%s", msg, strings.Join(mangas, "\n"))
+
+		// fmt.Println("Msg: ", msg)
+		// _, err := bot.Send(m.Sender, msg, tb.ModeHTML, tb.NoPreview)
+		// if err != nil {
+		// 	log.Println("There was an error sending the message: ", err.Error())
+		// }
 	})
 
 	bot.Handle("/subscribe", func(m *tb.Message) {
