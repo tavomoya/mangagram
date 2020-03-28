@@ -1,14 +1,32 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"mangagram/actions"
+	"mangagram/models"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/robfig/cron"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
+
+func getMongoClient(conn string) (*mongo.Database, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(conn))
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	db := client.Database("mangagram")
+	return db, nil
+}
 
 func main() {
 	log.Println("Started Manga Gram bot")
@@ -17,11 +35,27 @@ func main() {
 	publicURL := os.Getenv("PUBLIC_URL")
 	token := os.Getenv("TOKEN")
 
+	conn := os.Getenv("DB_CONN_STRING")
+
+	if conn == "" {
+		conn = "mongodb://localhost:27017"
+	}
+
 	if port == "" {
 		port = "9000"
 	}
 
 	listen := fmt.Sprintf(":%s", port)
+
+	db, err := getMongoClient(conn)
+	if err != nil {
+		log.Fatal("There was an error connecting to DB: ", err)
+	}
+
+	dbConfig := &models.DatabaseConfig{
+		ConnectionString: conn,
+		MongoClient:      db,
+	}
 
 	webhook := &tb.Webhook{
 		Listen:   listen,
@@ -38,6 +72,14 @@ func main() {
 		log.Fatal("there was an error creating the bot: ", err)
 	}
 
+	jobs := &models.Job{
+		Cron: cron.New(),
+		DB:   dbConfig,
+	}
+
+	// Run Jobs
+	actions.GetMangaUpdates(jobs, bot)
+
 	// Available commands:
 
 	bot.Handle("/manga", func(m *tb.Message) {
@@ -46,33 +88,69 @@ func main() {
 		name := strings.Replace(m.Text, "/manga ", "", 1)
 
 		if name == "" {
-			bot.Send(m.Sender, "No manga name supplied")
+			bot.Send(m.Sender, "<b>No manga name supplied</b>", tb.ModeHTML)
 		}
 
-		feed := actions.NewMangaInterface(2)
+		feed := actions.NewMangaInterface(2, dbConfig)
 
 		res := feed.QueryManga(name)
 		if res == nil {
-			bot.Send(m.Sender, "No manga found with name: "+name)
+			bot.Send(m.Sender, "No Manga found with your criteria")
 		}
 
-		msg := "<b>This is what I found:</b>\n\n"
-		mangas := make([]string, len(res.Suggestions))
+		msg := "These are the manga I found:\n"
 
-		for i, manga := range res.Suggestions {
-			fmt.Println("The manga result is: ", manga.Data, manga.Value)
+		inlineKb := [][]tb.InlineButton{}
 
-			t := fmt.Sprintf("%s - <a href='%s'>%s</a>", manga.Value, fmt.Sprintf(feed.ViewManga(), manga.Data), manga.Value)
+		for _, item := range res.Suggestions {
+			fmt.Println("The manga iten: ", item)
+			inlineBtn := []tb.InlineButton{
+				tb.InlineButton{
+					Text:   item.Value + " 📖",
+					Unique: item.Data,
+					URL:    fmt.Sprintf(feed.ViewManga(), item.Data),
+				},
+				tb.InlineButton{
+					Text:   "Subscribe" + " 🔔",
+					Unique: item.Data + "_sub",
+				},
+			}
 
-			mangas[i] = t
+			bot.Handle(&inlineBtn[1], func(btnCb *tb.Callback) {
+				fmt.Println("Subscribing user: ", btnCb.Sender.FirstName, inlineBtn[1].Unique, inlineBtn[0].Text, m.Chat.ID)
+				// Call the subscribe method of the feed
+				manganame := strings.Replace(inlineBtn[0].Text, " 📖", "", 1)
+				mangaurl := fmt.Sprintf(feed.ViewManga(), inlineBtn[0].Unique)
+
+				sub := &models.Subscription{
+					UserID:    btnCb.Sender.ID,
+					UserName:  btnCb.Sender.FirstName,
+					ChatID:    m.Chat.ID,
+					MangaName: manganame,
+					MangaURL:  mangaurl,
+				}
+
+				err = feed.Subscribe(sub)
+				if err != nil {
+					log.Fatal("There was an error subscribing user: ", err)
+				}
+
+				bot.Respond(btnCb, &tb.CallbackResponse{
+					Text:      "Succesfully subscribed",
+					ShowAlert: true,
+				})
+			})
+
+			fmt.Println("Inline btns: ", inlineBtn)
+			inlineKb = append(inlineKb, inlineBtn)
 		}
 
-		msg = fmt.Sprintf("%s %s", msg, strings.Join(mangas, "\n"))
-
-		fmt.Println("Msg: ", msg)
-		_, err := bot.Send(m.Sender, msg, tb.ModeHTML, tb.NoPreview)
+		fmt.Println("Final message and keyboard: ", msg, inlineKb)
+		_, err = bot.Send(m.Sender, msg, &tb.ReplyMarkup{
+			InlineKeyboard: inlineKb,
+		})
 		if err != nil {
-			log.Println("There was an error sending the message: ", err.Error())
+			log.Fatal("This is not working. Unable to send messages: ", err)
 		}
 	})
 

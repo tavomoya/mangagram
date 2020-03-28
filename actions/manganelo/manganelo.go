@@ -2,6 +2,7 @@ package manganelo
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"mangagram/models"
@@ -9,13 +10,16 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	strip "github.com/grokify/html-strip-tags-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Manganelo is a struct used to attach
 // all functionality available within this
 // manga source.
 type Manganelo struct {
+	DB           *models.DatabaseConfig
 	ApiURL       string
 	ViewMangaURL string
 }
@@ -23,8 +27,9 @@ type Manganelo struct {
 // NewManganelo function returns a pointer to
 // a Manganelo struct that can be used to call
 // all of its methods.
-func NewManganelo() *Manganelo {
+func NewManganelo(db *models.DatabaseConfig) *Manganelo {
 	return &Manganelo{
+		DB:           db,
 		ApiURL:       "https://manganelo.com/getstorysearchjson",
 		ViewMangaURL: "https://manganelo.com/manga/%s",
 	}
@@ -81,4 +86,52 @@ func (m *Manganelo) QueryManga(name string) *models.ApiQuerySuggestions {
 	}
 
 	return suggestions
+}
+
+// Subscribe method receives a subscription model, this contains information about
+// a User or Group that wants to receive alerts from a certain Manga title.
+// The method will save this in a 'Subscription' collection in MongoDB, as well as
+// set a value for the lastChapter of the Manga title.
+func (m *Manganelo) Subscribe(subscription *models.Subscription) error {
+
+	// Validate subscription data
+	if subscription.MangaName == "" || subscription.MangaURL == "" {
+		log.Println("No manga supplied for subscription")
+		return errors.New("No manga supplied for subscription")
+	}
+
+	if subscription.UserID < 1 || subscription.ChatID < 1 {
+		log.Println("No User or Chat supplied for subscription")
+		return errors.New("No User or Chat supplied for subscription")
+	}
+
+	subscription.ID = primitive.NewObjectID()
+
+	subscription.LastChapterURL, _ = getMangaLastChapter(subscription.MangaURL)
+
+	_, err := m.DB.MongoClient.Collection("subscription").InsertOne(m.DB.Ctx, subscription)
+	if err != nil && !strings.Contains(err.Error(), "subscription_unq") {
+		log.Println("There was an error creating new subscription: ", err)
+		return err
+	}
+
+	return nil
+}
+
+func getMangaLastChapter(titleURL string) (string, error) {
+
+	if titleURL == "" {
+		log.Println("No title supplied")
+		return "", nil
+	}
+
+	page, err := goquery.NewDocument(titleURL)
+	if err != nil {
+		log.Println("There was an error getting the page: ", err)
+		return "", err
+	}
+
+	lastChaperUrl, _ := page.Find("a.chapter-name").First().Attr("href")
+
+	return lastChaperUrl, nil
 }
