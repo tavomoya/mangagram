@@ -14,6 +14,10 @@ import (
 
 const schedule string = "@every 12h"
 
+// GetMangaUpdates function runs a CRON job every 12h.
+// The job queries the subscription collection and looks
+// for new chapters. If a new chapter is found, a message
+// is sent to the Chat that got subscribed to the title.
 func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
 	log.Println("Am I running? ", schedule, job, bot)
 	job.Cron.AddFunc(schedule, func() {
@@ -67,7 +71,7 @@ func onError(name string, started time.Time, err error) {
 
 func onSuccess(name string, started time.Time) {
 	ended := time.Now()
-	fmt.Println("*** [*] CRON job '%s' finished succesfully ***", name)
+	fmt.Printf("*** [*] CRON job '%s' finished succesfully ***", name)
 	fmt.Printf("*** [*] CRON job '%s' end time: %v ***\n", name, ended)
 	fmt.Printf("*** [*] CRON job '%s' time elapsed: %v ***\n", name, ended.Sub(started))
 }
@@ -85,9 +89,9 @@ func getMangaLastChapter(titleURL string) (string, error) {
 		return "", err
 	}
 
-	lastChaperUrl, _ := page.Find("a.chapter-name").First().Attr("href")
+	lastChaperURL, _ := page.Find("a.chapter-name").First().Attr("href")
 
-	return lastChaperUrl, nil
+	return lastChaperURL, nil
 }
 
 func updateLastChapter(manga *models.Subscription, job *models.Job) {

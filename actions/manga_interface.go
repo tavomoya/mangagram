@@ -6,12 +6,16 @@ import (
 	"mangagram/models"
 )
 
+// MangaFeedInterface defines the interface to all
+// methods in the different manga sources.
 type MangaFeedInterface interface {
 	QueryManga(string) *models.ApiQuerySuggestions
 	ViewManga() string
 	Subscribe(subscription *models.Subscription) error
 }
 
+// NewMangaInterface function creates a new MangaFeedInterface interface ready
+// to use.
 func NewMangaInterface(src int, db *models.DatabaseConfig) MangaFeedInterface {
 
 	switch src {
