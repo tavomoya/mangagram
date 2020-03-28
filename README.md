@@ -14,8 +14,8 @@ Get a list of mangas that match the query
 
 ## To DO
 
-More functionality is coming. Check the TODO.md to check on what we're working next.
+More functionality is coming. Check the [TODO.md](https://github.com/tavomoya/mangagram/TODO.md) to check on what we're working next.
 
 ## Contribute
 
-If you want to contribute in any way please follow the guidelines on the CONTRIBUTE.md file.
+If you want to contribute in any way please follow the guidelines on the [CONTRIBUTE.md](https://github.com/tavomoya/mangagram/CONTRIBUTE.md) file.
