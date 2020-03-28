@@ -147,7 +147,7 @@ func main() {
 		}
 
 		fmt.Println("Final message and keyboard: ", msg, inlineKb)
-		_, err = bot.Send(m.Sender, msg, &tb.ReplyMarkup{
+		_, err = bot.Send(m.Chat, msg, &tb.ReplyMarkup{
 			InlineKeyboard: inlineKb,
 		})
 		if err != nil {
