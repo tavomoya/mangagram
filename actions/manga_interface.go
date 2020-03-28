@@ -9,15 +9,16 @@ import (
 type MangaFeedInterface interface {
 	QueryManga(string) *models.ApiQuerySuggestions
 	ViewManga() string
+	Subscribe(subscription *models.Subscription) error
 }
 
-func NewMangaInterface(src int) MangaFeedInterface {
+func NewMangaInterface(src int, db *models.DatabaseConfig) MangaFeedInterface {
 
 	switch src {
 	case 1:
-		return mangareader.NewMangaReader()
+		return mangareader.NewMangaReader(db)
 	case 2:
-		return manganelo.NewManganelo()
+		return manganelo.NewManganelo(db)
 	default:
 		return nil
 	}

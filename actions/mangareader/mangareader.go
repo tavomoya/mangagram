@@ -2,18 +2,22 @@ package mangareader
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"mangagram/models"
 	"net/http"
 	"net/url"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // MangaReader is a struct used to attach
 // all functionality available within this
 // manga source.
 type MangaReader struct {
+	DB           *models.DatabaseConfig
 	ApiURL       string
 	ViewMangaURL string
 }
@@ -21,8 +25,9 @@ type MangaReader struct {
 // NewMangaReader function returns a pointer to
 // a MangaReader struct that can be used to call
 // all of its methods.
-func NewMangaReader() *MangaReader {
+func NewMangaReader(db *models.DatabaseConfig) *MangaReader {
 	return &MangaReader{
+		DB:           db,
 		ApiURL:       "https://mangareader.pw/search?query=%s",
 		ViewMangaURL: "https://mangareader.pw/search?query=%s",
 	}
@@ -73,4 +78,32 @@ func (m *MangaReader) QueryManga(name string) *models.ApiQuerySuggestions {
 // the Manga's URL.
 func (m *MangaReader) ViewManga() string {
 	return m.ViewMangaURL
+}
+
+// Subscribe method receives a subscription model, this contains information about
+// a User or Group that wants to receive alerts from a certain Manga title.
+// The method will save this in a 'Subscription' collection in MongoDB, as well as
+// set a value for the lastChapter of the Manga title.
+func (m *MangaReader) Subscribe(subscription *models.Subscription) error {
+
+	// Validate subscription data
+	if subscription.MangaName == "" || subscription.MangaURL == "" {
+		log.Println("No manga supplied for subscription")
+		return errors.New("No manga supplied for subscription")
+	}
+
+	if subscription.UserID < 1 || subscription.ChatID < 1 {
+		log.Println("No User or Chat supplied for subscription")
+		return errors.New("No User or Chat supplied for subscription")
+	}
+
+	subscription.ID = primitive.NewObjectID()
+
+	_, err := m.DB.MongoClient.Collection("subscription").InsertOne(m.DB.Ctx, subscription)
+	if err != nil {
+		log.Println("There was an error creating new subscription: ", err)
+		return err
+	}
+
+	return nil
 }
