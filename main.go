@@ -86,10 +86,10 @@ func main() {
 	bot.Handle("/manga", func(m *tb.Message) {
 		fmt.Println("The message received is ", m.Text)
 
-		name := strings.Replace(m.Text, "/manga ", "", 1)
+		name := m.Payload
 
 		if name == "" {
-			bot.Send(m.Sender, "<b>No manga name supplied</b>", tb.ModeHTML)
+			bot.Send(m.Chat, "<b>No manga name supplied</b>", tb.ModeHTML)
 		}
 
 		feed := actions.NewMangaInterface(2, dbConfig)

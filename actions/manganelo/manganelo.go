@@ -100,9 +100,9 @@ func (m *Manganelo) Subscribe(subscription *models.Subscription) error {
 		return errors.New("No manga supplied for subscription")
 	}
 
-	if subscription.UserID < 1 || subscription.ChatID < 1 {
-		log.Println("No User or Chat supplied for subscription")
-		return errors.New("No User or Chat supplied for subscription")
+	if subscription.ChatID == 0 {
+		log.Println("No Chat supplied for subscription")
+		return errors.New("No Chat supplied for subscription")
 	}
 
 	subscription.ID = primitive.NewObjectID()
