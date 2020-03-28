@@ -1,5 +1,7 @@
 Contributing to this project is really simple, follow the steps below to get started.
 
+I'm using Go modules so you'll need to use Go 1.11 (With flag GO111MoDULE) or higher.
+
 ## Instructions
 
 - Fork the repo
