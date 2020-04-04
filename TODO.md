@@ -2,6 +2,8 @@
 
 - [x] Query Mangas
 - [x] Subscribe to a Manga
+- [ ] Command to show current subscriptions
+- [ ] Delete a subscription
 - [ ] Choose different manga source
 - [ ] Multilanguage sources 
 
