@@ -160,6 +160,10 @@ func main() {
 			log.Println(err)
 		}
 
+		if subs == nil {
+			bot.Send(m.Chat, "<b>You're not subscribed to any mangas yet.</b>", tb.ModeHTML)
+		}
+
 		btns := [][]tb.InlineButton{}
 
 		for _, s := range subs {
