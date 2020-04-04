@@ -19,7 +19,6 @@ const schedule string = "@every 12h"
 // for new chapters. If a new chapter is found, a message
 // is sent to the Chat that got subscribed to the title.
 func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
-	log.Println("Am I running? ", schedule, job, bot)
 	job.Cron.AddFunc(schedule, func() {
 		jobName := "GetMangaUpdates"
 		log.Println("Running Manga Updates CRON")

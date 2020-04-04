@@ -84,7 +84,6 @@ func main() {
 	// Available commands:
 
 	bot.Handle("/manga", func(m *tb.Message) {
-		fmt.Println("The message received is ", m.Text)
 
 		name := m.Payload
 
@@ -104,7 +103,6 @@ func main() {
 		inlineKb := [][]tb.InlineButton{}
 
 		for _, item := range res.Suggestions {
-			fmt.Println("The manga iten: ", item)
 			inlineBtn := []tb.InlineButton{
 				tb.InlineButton{
 					Text:   item.Value + " 📖",
@@ -142,7 +140,6 @@ func main() {
 				})
 			})
 
-			fmt.Println("Inline btns: ", inlineBtn)
 			inlineKb = append(inlineKb, inlineBtn)
 		}
 
@@ -152,6 +149,37 @@ func main() {
 		})
 		if err != nil {
 			log.Fatal("This is not working. Unable to send messages: ", err)
+		}
+	})
+
+	bot.Handle("/subscriptions", func(m *tb.Message) {
+
+		// Get Chat Subscriptions
+		subs, err := actions.GetChatSubscriptions(dbConfig, m.Chat.ID)
+		if err != nil {
+			log.Println(err)
+		}
+
+		btns := [][]tb.InlineButton{}
+
+		for _, s := range subs {
+
+			btn := []tb.InlineButton{
+				tb.InlineButton{
+					Text:   s.MangaName,
+					Unique: s.ID.String(),
+					URL:    s.MangaURL,
+				},
+			}
+
+			btns = append(btns, btn)
+		}
+
+		_, err = bot.Send(m.Chat, "Current Subscriptions:\n", &tb.ReplyMarkup{
+			InlineKeyboard: btns,
+		})
+		if err != nil {
+			log.Fatal("Unable to respond: ", err)
 		}
 	})
 
