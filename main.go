@@ -180,6 +180,7 @@ func main() {
 				},
 			}
 
+			fmt.Println("Btn slice: ", btn)
 			bot.Handle(&btn[1], func(cb *tb.Callback) {
 				fmt.Println("Remove sub: ", btn[0].Text, btn[0].Unique, btn[1].Unique)
 				err = actions.RemoveMangaSubscription(dbConfig, btn[0].Unique)
