@@ -176,7 +176,7 @@ func main() {
 				},
 				{
 					Text:   "Remove ❌",
-					Unique: s.MangaName,
+					Unique: s.ID.String() + "_del",
 				},
 			}
 
