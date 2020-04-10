@@ -180,7 +180,7 @@ func main() {
 				},
 			}
 
-			bot.Handle(btn[1], func(cb *tb.Callback) {
+			bot.Handle(&btn[1], func(cb *tb.Callback) {
 
 				err = actions.RemoveMangaSubscription(dbConfig, btn[0].Unique)
 				if err != nil {
