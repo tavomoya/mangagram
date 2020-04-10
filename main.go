@@ -104,12 +104,12 @@ func main() {
 
 		for _, item := range res.Suggestions {
 			inlineBtn := []tb.InlineButton{
-				tb.InlineButton{
+				{
 					Text:   item.Value + " 📖",
 					Unique: item.Data,
 					URL:    fmt.Sprintf(feed.ViewManga(), item.Data),
 				},
-				tb.InlineButton{
+				{
 					Text:   "Subscribe" + " 🔔",
 					Unique: item.Data + "_sub",
 				},
@@ -169,12 +169,29 @@ func main() {
 		for _, s := range subs {
 
 			btn := []tb.InlineButton{
-				tb.InlineButton{
-					Text:   s.MangaName,
+				{
+					Text:   s.MangaName + " 📖",
 					Unique: s.ID.String(),
 					URL:    s.MangaURL,
 				},
+				{
+					Text:   "Remove ❌",
+					Unique: s.MangaName,
+				},
 			}
+
+			bot.Handle(btn[1], func(cb *tb.Callback) {
+
+				err = actions.RemoveMangaSubscription(dbConfig, btn[0].Unique)
+				if err != nil {
+					log.Fatal("There was an error removing subscription: ", err)
+				}
+
+				bot.Respond(cb, &tb.CallbackResponse{
+					Text:      "Subscription removed",
+					ShowAlert: true,
+				})
+			})
 
 			btns = append(btns, btn)
 		}
