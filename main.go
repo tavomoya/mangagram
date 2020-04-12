@@ -171,12 +171,12 @@ func main() {
 			btn := []tb.InlineButton{
 				{
 					Text:   s.MangaName + " 📖",
-					Unique: s.ID.Hex(),
+					Unique: s.ID.String(),
 					URL:    s.MangaURL,
 				},
 				{
 					Text:   "Remove ❌",
-					Unique: s.ID.String(),
+					Unique: s.ID.Hex(),
 				},
 			}
 
