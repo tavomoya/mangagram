@@ -171,7 +171,7 @@ func main() {
 			btn := []tb.InlineButton{
 				{
 					Text:   s.MangaName + " 📖",
-					Unique: s.MangaURL,
+					Unique: s.ID.Hex(),
 					URL:    s.MangaURL,
 				},
 				{
@@ -181,14 +181,14 @@ func main() {
 			}
 
 			fmt.Println("Btn slice: ", btn)
-			bot.Handle(&btn[1], func(cb *tb.Callback) {
+			bot.Handle(&btn[1], func(btnCb *tb.Callback) {
 				fmt.Println("Remove sub: ", btn[0].Text, btn[0].Unique, btn[1].Unique)
 				err = actions.RemoveMangaSubscription(dbConfig, btn[1].Unique)
 				if err != nil {
 					log.Fatal("There was an error removing subscription: ", err)
 				}
 
-				bot.Respond(cb, &tb.CallbackResponse{
+				bot.Respond(btnCb, &tb.CallbackResponse{
 					Text:      "Subscription removed",
 					ShowAlert: true,
 				})
