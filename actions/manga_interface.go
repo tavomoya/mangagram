@@ -6,6 +6,11 @@ import (
 	"mangagram/models"
 )
 
+// Available Manga Feeds:
+// 1- MangaReader
+// 2- Manganelo (default)
+// 3- MangaEden
+
 // MangaFeedInterface defines the interface to all
 // methods in the different manga sources.
 type MangaFeedInterface interface {
