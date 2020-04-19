@@ -1,4 +1,4 @@
-package kissmanga
+package mangadex
 
 import (
 	"errors"
@@ -12,35 +12,35 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Kissmanga is a struct to attach
+// Mangaeden is a struct used to attach
 // all functionality available within this
 // manga source
-type Kissmanga struct {
+type Mangadex struct {
 	DB           *models.DatabaseConfig
 	ApiURL       string
 	ViewMangaURL string
 }
 
-// NewKissmanga function returns a pointer to a Kissmanga
+// NewMangaeden function returns a pointer to a Mangaeden
 // struct that can be used to call all of its methods
-func NewKissmanga(db *models.DatabaseConfig) *Kissmanga {
-	return &Kissmanga{
+func NewMangadex(db *models.DatabaseConfig) *Mangadex {
+	return &Mangadex{
 		DB:           db,
-		ApiURL:       "https://kissmanga.org/Search/SearchSuggest?keyword=%s",
-		ViewMangaURL: "https://kissmanga.org%s",
+		ApiURL:       "",
+		ViewMangaURL: "",
 	}
 }
 
 // ViewManga method returns a string with
 // the Manga's URL
-func (k *Kissmanga) ViewManga() string {
-	return k.ViewMangaURL
+func (m *Mangadex) ViewManga() string {
+	return m.ViewMangaURL
 }
 
 // QueryManga method receives a string that refers to the Manga name, it then
-// makes a call to the Kissmanga API, and with the results it returns a
+// makes a call to the Mangadex API, and with the results it returns a
 // pointer to a ApiQuerySuggestions struct
-func (k *Kissmanga) QueryManga(name string) *models.ApiQuerySuggestions {
+func (m *Mangadex) QueryManga(name string) *models.ApiQuerySuggestions {
 
 	if name == "" {
 		return nil
@@ -48,22 +48,23 @@ func (k *Kissmanga) QueryManga(name string) *models.ApiQuerySuggestions {
 
 	escapedName := url.QueryEscape(name)
 
-	path := fmt.Sprintf(k.ApiURL, escapedName)
+	path := fmt.Sprintf(m.ApiURL, escapedName)
 
 	page, err := goquery.NewDocument(path)
 	if err != nil {
-		log.Println("There was an error getting suggestions from Kissmanga's API: ", err)
+		log.Println("There was an error getting to the search pahe: ", err)
 		return nil
 	}
 
 	suggestions := new(models.ApiQuerySuggestions)
+	page.Find("div a.manga_title").Each(func(idx int, selection *goquery.Selection) {
 
-	page.Find("a.item_search_link").Each(func(idx int, s *goquery.Selection) {
+		mangaTitle, _ := selection.Attr("title")
+		mangaURL, _ := selection.Attr("href")
 
-		mangaURL, _ := s.Attr("href")
 		manga := models.MangaSuggestions{
-			Data:  fmt.Sprintf(k.ViewMangaURL, mangaURL),
-			Value: s.Text(),
+			Data:  fmt.Sprintf(m.ViewMangaURL, mangaURL),
+			Value: mangaTitle,
 		}
 
 		suggestions.Suggestions = append(suggestions.Suggestions, manga)
@@ -72,7 +73,8 @@ func (k *Kissmanga) QueryManga(name string) *models.ApiQuerySuggestions {
 	return suggestions
 }
 
-func (k *Kissmanga) getLastMangaChapter(mangaURL string) (string, error) {
+func (m *Mangadex) getLastMangaChapter(mangaURL string) (string, error) {
+
 	if mangaURL == "" {
 		log.Println("No manga supplied")
 		return "", nil
@@ -80,20 +82,20 @@ func (k *Kissmanga) getLastMangaChapter(mangaURL string) (string, error) {
 
 	page, err := goquery.NewDocument(mangaURL)
 	if err != nil {
-		log.Println("there was an error getting the manga page: ", err)
+		log.Println("There was an error trying to get to the manga page: ", err)
 		return "", err
 	}
 
-	lastChapter, _ := page.Find("div.listing div div h3 a").First().Attr("href")
+	lastChapter, _ := page.Find("div[data-lang=1] a.text-truncate").First().Attr("href")
 
-	return fmt.Sprintf(k.ViewMangaURL, lastChapter), nil
+	return fmt.Sprintf(m.ViewMangaURL, lastChapter), nil
 }
 
 // Subscribe method receives a subscription model, this contains information
 // about a User or Group that wants to receive alerts from a certain Manga title.
 // The method will save this in a 'Subscription' collection in MongoDB, as well as
 // set a value for the lastChapter of the Manga title.
-func (k *Kissmanga) Subscribe(subscription *models.Subscription) error {
+func (m *Mangadex) Subscribe(subscription *models.Subscription) error {
 
 	// Validate subscription data
 	if subscription.MangaName == "" || subscription.MangaURL == "" {
@@ -108,9 +110,9 @@ func (k *Kissmanga) Subscribe(subscription *models.Subscription) error {
 
 	subscription.ID = primitive.NewObjectID()
 
-	subscription.LastChapterURL, _ = k.getLastMangaChapter(subscription.MangaURL)
+	subscription.LastChapterURL, _ = m.getLastMangaChapter(subscription.MangaURL)
 
-	_, err := k.DB.MongoClient.Collection("subscription").InsertOne(k.DB.Ctx, subscription)
+	_, err := m.DB.MongoClient.Collection("subscription").InsertOne(m.DB.Ctx, subscription)
 	if err != nil && !strings.Contains(err.Error(), "subscription_unq") {
 		log.Println("There was an error creating new subscription: ", err)
 		return err
