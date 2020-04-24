@@ -91,7 +91,12 @@ func main() {
 			bot.Send(m.Chat, "<b>No manga name supplied</b>", tb.ModeHTML)
 		}
 
-		feed := actions.NewMangaInterface(2, dbConfig)
+		feedSrc := actions.GetChatMangaFeed(dbConfig, m.Chat.ID)
+		if feedSrc == 0 {
+			// Do something I guess?
+		}
+
+		feed := actions.NewMangaInterface(feedSrc, dbConfig)
 
 		res := feed.QueryManga(name)
 		if res == nil {
@@ -205,23 +210,4 @@ func main() {
 
 	bot.Start()
 
-	// Testing server
-
-	// router := mux.NewRouter()
-
-	// router.HandleFunc("/manga/{name}", func(w http.ResponseWriter, r *http.Request) {
-	// 	mangaName, _ := url.QueryUnescape(mux.Vars(r)["name"])
-	// 	log.Println("The name: ", mangaName)
-	// 	res := actions.QueryManga(mangaName)
-	// 	if res == nil {
-	// 		w.WriteHeader(http.StatusNotFound)
-	// 		return
-	// 	}
-
-	// 	w.Header().Set("Content-Type", "application/json")
-	// 	w.WriteHeader(http.StatusOK)
-	// 	json.NewEncoder(w).Encode(&res)
-	// }).Methods("GET")
-
-	// http.ListenAndServe(listen, handlers.CombinedLoggingHandler(os.Stdout, router))
 }
