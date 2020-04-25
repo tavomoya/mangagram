@@ -102,7 +102,27 @@ func AddFeedSubscription(db *models.DatabaseConfig, chatID int64, feed models.Ma
 		ChatID: chatID,
 	}
 
-	_, err := db.MongoClient.Collection("feed_sub").ReplaceOne(db.Ctx, bson.M{"chatid": chatID}, sub)
+	// Check if it exists:
+	f := models.FeedSubs{}
+	res := db.MongoClient.Collection("feed_sub").FindOne(db.Ctx, bson.M{"chatid": chatID})
+	err := res.Decode(&f)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			_, err = db.MongoClient.Collection("feed_sub").InsertOne(db.Ctx, sub)
+			if err != nil {
+				log.Println("There was an error saving the feed sub: ", err)
+				return err
+			}
+
+			return nil
+		}
+		log.Println("There was an unexpected error decoding feed_sub document into a struct: ", err)
+		return err
+	}
+
+	f.Code = feed.Code
+	f.URL = feed.URL
+	_, err = db.MongoClient.Collection("feed_sub").UpdateOne(db.Ctx, bson.M{"_id": f.ID}, bson.M{"$set": f})
 	if err != nil {
 		log.Println("There was an error saving the feed sub: ", err)
 		return err
