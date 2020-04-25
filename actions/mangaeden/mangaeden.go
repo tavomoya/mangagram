@@ -55,6 +55,8 @@ func (m *Mangaeden) QueryManga(name string) *models.ApiQuerySuggestions {
 
 	path := fmt.Sprintf(m.ApiURL, escapedName)
 
+	log.Println("the path: ", path)
+
 	res, err := http.Get(path)
 	if err != nil {
 		log.Println("There was an error requesting Mangaeden's API: ", err)

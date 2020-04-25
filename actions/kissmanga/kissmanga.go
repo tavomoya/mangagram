@@ -51,6 +51,7 @@ func (k *Kissmanga) QueryManga(name string) *models.ApiQuerySuggestions {
 	escapedName := url.QueryEscape(name)
 
 	path := fmt.Sprintf(k.ApiURL, escapedName)
+	log.Println("the path: ", path)
 
 	page, err := goquery.NewDocument(path)
 	if err != nil {
