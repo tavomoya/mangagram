@@ -68,7 +68,7 @@ func GetChatMangaFeed(db *models.DatabaseConfig, chatID int64) int {
 	}
 
 	feed := models.FeedSubs{}
-	res := db.MongoClient.Collection("feed_subs").FindOne(db.Ctx, bson.M{"chatid": chatID})
+	res := db.MongoClient.Collection("feed_sub").FindOne(db.Ctx, bson.M{"chatid": chatID})
 	err := res.Decode(&feed)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -80,4 +80,33 @@ func GetChatMangaFeed(db *models.DatabaseConfig, chatID int64) int {
 	}
 
 	return feed.Code
+}
+
+func AddFeedSubscription(db *models.DatabaseConfig, chatID int64, feed models.MangaFeed) error {
+
+	if db == nil {
+		log.Println("The DB model is nil")
+		return errors.New("The DB model passed is nil, can't operate")
+	}
+
+	// Validate chat ID
+	if chatID == 0 {
+		log.Println("ChatID can't be 0")
+		return errors.New("No Chat supplied for feed subscription")
+	}
+
+	sub := models.FeedSubs{
+		ID:     primitive.NewObjectID(),
+		URL:    feed.URL,
+		Code:   feed.Code,
+		ChatID: chatID,
+	}
+
+	_, err := db.MongoClient.Collection("feed_sub").ReplaceOne(db.Ctx, bson.M{"chatid": chatID}, sub)
+	if err != nil {
+		log.Println("There was an error saving the feed sub: ", err)
+		return err
+	}
+
+	return nil
 }

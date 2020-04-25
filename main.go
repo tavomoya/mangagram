@@ -7,6 +7,7 @@ import (
 	"mangagram/actions"
 	"mangagram/models"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -201,6 +202,53 @@ func main() {
 		}
 
 		_, err = bot.Send(m.Chat, "Current Subscriptions:\n", &tb.ReplyMarkup{
+			InlineKeyboard: btns,
+		})
+		if err != nil {
+			log.Fatal("Unable to respond: ", err)
+		}
+	})
+
+	bot.Handle("/setfeed", func(m *tb.Message) {
+
+		message := "Select feed:\n <b>Keep in mind that selecting a different feed than the one you have will remove any current manga subscriptions</b"
+
+		btns := [][]tb.InlineButton{}
+		for _, feed := range actions.AvailableFeeds {
+
+			btn := []tb.InlineButton{
+				{
+					Text:   feed.Name + "",
+					Unique: strconv.Itoa(feed.Code),
+				},
+				{
+					Text:   "🌐",
+					Unique: feed.URL,
+					URL:    feed.URL,
+				},
+			}
+
+			bot.Handle(&btn[0], func(btnCb *tb.Callback) {
+				c, _ := strconv.Atoi(btn[0].Unique)
+				f := models.MangaFeed{
+					Code: c,
+					URL:  btn[1].Unique,
+				}
+				err = actions.AddFeedSubscription(dbConfig, m.Chat.ID, f)
+				if err != nil {
+					log.Fatal("There was an error adding feed subscription: ", err)
+				}
+
+				bot.Respond(btnCb, &tb.CallbackResponse{
+					Text:      "Feed changed",
+					ShowAlert: true,
+				})
+			})
+
+			btns = append(btns, btn)
+		}
+
+		_, err = bot.Send(m.Chat, message, &tb.ReplyMarkup{
 			InlineKeyboard: btns,
 		})
 		if err != nil {

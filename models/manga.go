@@ -41,3 +41,9 @@ type MangaedenApiResponse struct {
 	URL   string `json:"string"`
 	Value string `json:"value"`
 }
+
+type MangaFeed struct {
+	Code int
+	Name string
+	URL  string
+}

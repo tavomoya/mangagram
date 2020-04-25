@@ -26,8 +26,8 @@ type Mangadex struct {
 func NewMangadex(db *models.DatabaseConfig) *Mangadex {
 	return &Mangadex{
 		DB:           db,
-		ApiURL:       "",
-		ViewMangaURL: "",
+		ApiURL:       "https://mangadex.org/search?title=%s",
+		ViewMangaURL: "https://mangadex.org%s",
 	}
 }
 
