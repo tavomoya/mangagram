@@ -48,7 +48,7 @@ func (k *Kissmanga) QueryManga(name string) *models.ApiQuerySuggestions {
 
 	log.Println("Thename to query: ", name)
 
-	escapedName := url.QueryEscape(name)
+	escapedName := url.PathEscape(name)
 
 	path := fmt.Sprintf(k.ApiURL, escapedName)
 	log.Println("the path: ", path)

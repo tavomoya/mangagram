@@ -51,7 +51,7 @@ func (m *Mangaeden) QueryManga(name string) *models.ApiQuerySuggestions {
 
 	log.Println("Thename to query: ", name)
 
-	escapedName := url.QueryEscape(name)
+	escapedName := url.PathEscape(name)
 
 	path := fmt.Sprintf(m.ApiURL, escapedName)
 
