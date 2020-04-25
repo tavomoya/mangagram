@@ -29,7 +29,7 @@ type Mangaeden struct {
 func NewMangaeden(db *models.DatabaseConfig) *Mangaeden {
 	return &Mangaeden{
 		DB:           db,
-		ApiURL:       "https://mangaeden.com/ajax/search-manga/?term=",
+		ApiURL:       "https://mangaeden.com/ajax/search-manga/?term=%s",
 		ViewMangaURL: "https://mangaeden.com%s",
 	}
 }
@@ -48,6 +48,8 @@ func (m *Mangaeden) QueryManga(name string) *models.ApiQuerySuggestions {
 	if name == "" {
 		return nil
 	}
+
+	log.Println("Thename to query: ", name)
 
 	escapedName := url.QueryEscape(name)
 

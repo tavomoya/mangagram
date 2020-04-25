@@ -42,6 +42,8 @@ func (m *MangaReader) QueryManga(name string) *models.ApiQuerySuggestions {
 		return nil
 	}
 
+	log.Println("Thename to query: ", name)
+
 	escapedName := url.QueryEscape(name)
 
 	path := fmt.Sprintf(m.ApiURL, escapedName)
