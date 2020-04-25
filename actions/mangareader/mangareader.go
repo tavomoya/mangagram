@@ -29,7 +29,7 @@ func NewMangaReader(db *models.DatabaseConfig) *MangaReader {
 	return &MangaReader{
 		DB:           db,
 		ApiURL:       "https://mangareader.pw/search?query=%s",
-		ViewMangaURL: "https://mangareader.pw/search?query=%s",
+		ViewMangaURL: "https://mangareader.pw/manga/%s",
 	}
 }
 
