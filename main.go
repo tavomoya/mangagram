@@ -100,7 +100,7 @@ func main() {
 		feed := actions.NewMangaInterface(feedSrc, dbConfig)
 
 		res := feed.QueryManga(name)
-		if res == nil {
+		if res == nil || len(res.Suggestions) == 0 {
 			bot.Send(m.Sender, "No Manga found with your criteria")
 		}
 
@@ -211,7 +211,7 @@ func main() {
 
 	bot.Handle("/setfeed", func(m *tb.Message) {
 
-		message := "Select feed:\n <b>Keep in mind that selecting a different feed than the one you have will remove any current manga subscriptions</b"
+		message := "Select feed:\n\n <b>Keep in mind that selecting a different feed than the one you have will remove any current manga subscriptions</b>"
 
 		btns := [][]tb.InlineButton{}
 		for _, feed := range actions.AvailableFeeds {
@@ -250,7 +250,7 @@ func main() {
 
 		_, err = bot.Send(m.Chat, message, &tb.ReplyMarkup{
 			InlineKeyboard: btns,
-		})
+		}, tb.ModeHTML)
 		if err != nil {
 			log.Fatal("Unable to respond: ", err)
 		}

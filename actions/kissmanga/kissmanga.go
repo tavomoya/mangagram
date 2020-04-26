@@ -65,7 +65,7 @@ func (k *Kissmanga) QueryManga(name string) *models.ApiQuerySuggestions {
 
 		mangaURL, _ := s.Attr("href")
 		manga := models.MangaSuggestions{
-			Data:  fmt.Sprintf(k.ViewMangaURL, mangaURL),
+			Data:  mangaURL,
 			Value: s.Text(),
 		}
 

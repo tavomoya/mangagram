@@ -38,7 +38,7 @@ type ManganeloApiResponse struct {
 
 type MangaedenApiResponse struct {
 	Label string `json:"label"`
-	URL   string `json:"string"`
+	URL   string `json:"url"`
 	Value string `json:"value"`
 }
 
