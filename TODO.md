@@ -2,9 +2,11 @@
 
 - [x] Query Mangas
 - [x] Subscribe to a Manga
-- [ ] Command to show current subscriptions
-- [ ] Delete a subscription
-- [ ] Choose different manga source
+- [x] Command to show current subscriptions
+- [x] Delete a subscription
+- [x] Choose different manga feeds
+- [ ] Include Mangadex as a feed
+- [ ] Include Mangaplus as a feed
 - [ ] Multilanguage sources 
 
 ## Suggestions
