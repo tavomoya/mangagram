@@ -101,7 +101,7 @@ func main() {
 
 		res := feed.QueryManga(name)
 		if res == nil || len(res.Suggestions) == 0 {
-			bot.Send(m.Sender, "No Manga found with your criteria")
+			bot.Send(m.Chat, "No Manga found with your criteria")
 			return
 		}
 
