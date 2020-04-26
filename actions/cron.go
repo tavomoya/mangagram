@@ -41,7 +41,7 @@ func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
 		for _, manga := range subs {
 			// Get the last chapter for each manga
 			last, err := getMangaLastChapter(manga.MangaURL)
-			if err != nil {
+			if err != nil || last == "" {
 				continue // LAter will decide what to do here
 			}
 

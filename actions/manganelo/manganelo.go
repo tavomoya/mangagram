@@ -50,6 +50,8 @@ func (m *Manganelo) QueryManga(name string) *models.ApiQuerySuggestions {
 		return nil
 	}
 
+	log.Println("Thename to query: ", name)
+
 	res, err := http.PostForm(m.ApiURL, url.Values{"searchword": {name}})
 	if err != nil {
 		log.Println("There was an error requesting this API: ", err)

@@ -29,7 +29,7 @@ func NewMangaReader(db *models.DatabaseConfig) *MangaReader {
 	return &MangaReader{
 		DB:           db,
 		ApiURL:       "https://mangareader.pw/search?query=%s",
-		ViewMangaURL: "https://mangareader.pw/search?query=%s",
+		ViewMangaURL: "https://mangareader.pw/manga/%s",
 	}
 }
 
@@ -42,9 +42,12 @@ func (m *MangaReader) QueryManga(name string) *models.ApiQuerySuggestions {
 		return nil
 	}
 
-	escapedName := url.QueryEscape(name)
+	log.Println("Thename to query: ", name)
+
+	escapedName := url.PathEscape(name)
 
 	path := fmt.Sprintf(m.ApiURL, escapedName)
+	log.Println("the path: ", path)
 
 	res, err := http.Get(path)
 	if err != nil {

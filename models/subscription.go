@@ -14,3 +14,11 @@ type Subscription struct {
 	MangaURL       string
 	LastChapterURL string
 }
+
+type FeedSubs struct {
+	ID     primitive.ObjectID `bson:"_id"`
+	URL    string
+	Code   int
+	ChatID int64
+	UserID int
+}

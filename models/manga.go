@@ -35,3 +35,15 @@ type ManganeloApiResponse struct {
 	Author      string `json:"author"`
 	LastChapter string `json:"lastchapter"`
 }
+
+type MangaedenApiResponse struct {
+	Label string `json:"label"`
+	URL   string `json:"url"`
+	Value string `json:"value"`
+}
+
+type MangaFeed struct {
+	Code int
+	Name string
+	URL  string
+}

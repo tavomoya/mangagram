@@ -7,6 +7,7 @@ import (
 	"mangagram/actions"
 	"mangagram/models"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -91,18 +92,24 @@ func main() {
 			bot.Send(m.Chat, "<b>No manga name supplied</b>", tb.ModeHTML)
 		}
 
-		feed := actions.NewMangaInterface(2, dbConfig)
+		feedSrc := actions.GetChatMangaFeed(dbConfig, m.Chat.ID)
+		if feedSrc == 0 {
+			// Do something I guess?
+		}
+
+		feed := actions.NewMangaInterface(feedSrc, dbConfig)
 
 		res := feed.QueryManga(name)
-		if res == nil {
-			bot.Send(m.Sender, "No Manga found with your criteria")
+		if res == nil || len(res.Suggestions) == 0 {
+			bot.Send(m.Chat, "No Manga found with your criteria")
+			return
 		}
 
 		msg := "These are the manga I found:\n"
 
 		inlineKb := [][]tb.InlineButton{}
 
-		for _, item := range res.Suggestions {
+		for i, item := range res.Suggestions {
 			inlineBtn := []tb.InlineButton{
 				{
 					Text:   item.Value + " 📖",
@@ -111,12 +118,13 @@ func main() {
 				},
 				{
 					Text:   "Subscribe" + " 🔔",
-					Unique: item.Data + "_sub",
+					Unique: strconv.Itoa(i),
 				},
 			}
 
 			bot.Handle(&inlineBtn[1], func(btnCb *tb.Callback) {
 				fmt.Println("Subscribing user: ", btnCb.Sender.FirstName, inlineBtn[1].Unique, inlineBtn[0].Text, m.Chat.ID)
+
 				// Call the subscribe method of the feed
 				manganame := strings.Replace(inlineBtn[0].Text, " 📖", "", 1)
 				mangaurl := fmt.Sprintf(feed.ViewManga(), inlineBtn[0].Unique)
@@ -160,8 +168,9 @@ func main() {
 			log.Println(err)
 		}
 
-		if subs == nil {
+		if subs == nil || len(subs) == 0 {
 			bot.Send(m.Chat, "<b>You're not subscribed to any mangas yet.</b>", tb.ModeHTML)
+			return
 		}
 
 		btns := [][]tb.InlineButton{}
@@ -203,25 +212,53 @@ func main() {
 		}
 	})
 
+	bot.Handle("/setfeed", func(m *tb.Message) {
+
+		message := "Select feed:\n\n<b>Keep in mind that selecting a different feed than the one you have will remove any current manga subscriptions</b>"
+
+		btns := [][]tb.InlineButton{}
+		for _, feed := range actions.AvailableFeeds {
+
+			btn := []tb.InlineButton{
+				{
+					Text:   feed.Name + "",
+					Unique: strconv.Itoa(feed.Code),
+				},
+				{
+					Text:   "🌐",
+					Unique: feed.URL,
+					URL:    feed.URL,
+				},
+			}
+
+			bot.Handle(&btn[0], func(btnCb *tb.Callback) {
+				c, _ := strconv.Atoi(btn[0].Unique)
+				f := models.MangaFeed{
+					Code: c,
+					URL:  btn[1].Unique,
+				}
+				err = actions.AddFeedSubscription(dbConfig, m.Chat.ID, f)
+				if err != nil {
+					log.Fatal("There was an error adding feed subscription: ", err)
+				}
+
+				bot.Respond(btnCb, &tb.CallbackResponse{
+					Text:      "Feed changed",
+					ShowAlert: true,
+				})
+			})
+
+			btns = append(btns, btn)
+		}
+
+		_, err = bot.Send(m.Chat, message, &tb.ReplyMarkup{
+			InlineKeyboard: btns,
+		}, tb.ModeHTML)
+		if err != nil {
+			log.Fatal("Unable to respond: ", err)
+		}
+	})
+
 	bot.Start()
 
-	// Testing server
-
-	// router := mux.NewRouter()
-
-	// router.HandleFunc("/manga/{name}", func(w http.ResponseWriter, r *http.Request) {
-	// 	mangaName, _ := url.QueryUnescape(mux.Vars(r)["name"])
-	// 	log.Println("The name: ", mangaName)
-	// 	res := actions.QueryManga(mangaName)
-	// 	if res == nil {
-	// 		w.WriteHeader(http.StatusNotFound)
-	// 		return
-	// 	}
-
-	// 	w.Header().Set("Content-Type", "application/json")
-	// 	w.WriteHeader(http.StatusOK)
-	// 	json.NewEncoder(w).Encode(&res)
-	// }).Methods("GET")
-
-	// http.ListenAndServe(listen, handlers.CombinedLoggingHandler(os.Stdout, router))
 }
