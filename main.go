@@ -117,12 +117,13 @@ func main() {
 				},
 				{
 					Text:   "Subscribe" + " 🔔",
-					Unique: item.Data + "_sub",
+					Unique: item.Value + "_sub",
 				},
 			}
 
 			bot.Handle(&inlineBtn[1], func(btnCb *tb.Callback) {
 				fmt.Println("Subscribing user: ", btnCb.Sender.FirstName, inlineBtn[1].Unique, inlineBtn[0].Text, m.Chat.ID)
+
 				// Call the subscribe method of the feed
 				manganame := strings.Replace(inlineBtn[0].Text, " 📖", "", 1)
 				mangaurl := fmt.Sprintf(feed.ViewManga(), inlineBtn[0].Unique)
