@@ -167,7 +167,7 @@ func main() {
 			log.Println(err)
 		}
 
-		if subs == nil {
+		if subs == nil || len(subs) == 0 {
 			bot.Send(m.Chat, "<b>You're not subscribed to any mangas yet.</b>", tb.ModeHTML)
 		}
 
