@@ -108,7 +108,7 @@ func main() {
 
 		inlineKb := [][]tb.InlineButton{}
 
-		for _, item := range res.Suggestions {
+		for i, item := range res.Suggestions {
 			inlineBtn := []tb.InlineButton{
 				{
 					Text:   item.Value + " 📖",
@@ -117,7 +117,7 @@ func main() {
 				},
 				{
 					Text:   "Subscribe" + " 🔔",
-					Unique: item.Value + "_sub",
+					Unique: strconv.Itoa(i),
 				},
 			}
 
@@ -212,7 +212,7 @@ func main() {
 
 	bot.Handle("/setfeed", func(m *tb.Message) {
 
-		message := "Select feed:\n\n <b>Keep in mind that selecting a different feed than the one you have will remove any current manga subscriptions</b>"
+		message := "Select feed:\n\n<b>Keep in mind that selecting a different feed than the one you have will remove any current manga subscriptions</b>"
 
 		btns := [][]tb.InlineButton{}
 		for _, feed := range actions.AvailableFeeds {
