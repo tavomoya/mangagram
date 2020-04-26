@@ -102,6 +102,7 @@ func main() {
 		res := feed.QueryManga(name)
 		if res == nil || len(res.Suggestions) == 0 {
 			bot.Send(m.Sender, "No Manga found with your criteria")
+			return
 		}
 
 		msg := "These are the manga I found:\n"
@@ -169,6 +170,7 @@ func main() {
 
 		if subs == nil || len(subs) == 0 {
 			bot.Send(m.Chat, "<b>You're not subscribed to any mangas yet.</b>", tb.ModeHTML)
+			return
 		}
 
 		btns := [][]tb.InlineButton{}
