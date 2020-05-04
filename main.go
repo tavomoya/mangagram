@@ -292,6 +292,29 @@ func main() {
 		}
 	})
 
+	bot.Handle("/help", func(m *tb.Message) {
+		msg := `
+		<b>Available Commmands:</b>
+		/manga {title} - Get a list of mangas that match the title
+		/subscriptions - Get a list of the chat's current manga subscriptions
+		/setfeed - Change manga feed used for manga searches (defaults to Manga Reader)
+		/help - Info about available commands and mangafeeds
+		
+		<b>Manga Feeds</b>
+		- Manga Reader (http://manga-reader.fun)
+		- Manganelo (https://manganelo.com)
+		- Mangaeden (https://mangaeden.com)
+		- Kissmanga (https://kissmanga.com)
+
+		You can set your favorite one using the /setfeed command.
+		`
+		_, err := bot.Send(m.Chat, msg, tb.ModeHTML, tb.NoPreview)
+		if err != nil {
+			log.Println("There was an error sending start msg: ", err)
+			return
+		}
+	})
+
 	bot.Start()
 
 }
