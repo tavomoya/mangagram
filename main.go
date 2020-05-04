@@ -84,6 +84,39 @@ func main() {
 
 	// Available commands:
 
+	bot.Handle("/start", func(m *tb.Message) {
+
+		msg := `
+		Hi! This is MangaGram, a Telegram bot for alerts on your favorite manga titles.
+
+		<b>Available Commmands:</b>
+		/manga {title} - Get a list of mangas that match the title
+		/subscriptions - Get a list of the chat's current manga subscriptions
+		/setfeed - Change manga feed used for manga searches (defaults to Manga Reader)
+		/help - Info about available commands and mangafeeds
+		
+		<b>Manga Feeds</b>
+		Currently MangaGram supplies manga results from the following pages:
+
+		- Manga Reader (http://manga-reader.fun)
+		- Manganelo (https://manganelo.com)
+		- Mangaeden (https://mangaeden.com)
+		- Kissmanga (https://kissmanga.com)
+
+		You can set your favorite one using the /setfeed command.
+		
+		If you need help use the /help command.
+
+		MangaGram v0.1.0. Made with ❤️ by @tavomoya.
+		`
+
+		_, err := bot.Send(m.Chat, msg, tb.ModeHTML, tb.NoPreview)
+		if err != nil {
+			log.Println("There was an error sending start msg: ", err)
+			return
+		}
+	})
+
 	bot.Handle("/manga", func(m *tb.Message) {
 
 		name := m.Payload
