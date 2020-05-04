@@ -99,7 +99,7 @@ func (m *Mangaeden) QueryManga(name string) *models.ApiQuerySuggestions {
 	return suggestions
 }
 
-func (m *Mangaeden) getLastMagaChapter(mangaURL string) (string, error) {
+func (m *Mangaeden) GetLastMangaChapter(mangaURL string) (string, error) {
 
 	if mangaURL == "" {
 		log.Println("No manga supplied")
@@ -135,8 +135,9 @@ func (m *Mangaeden) Subscribe(subscription *models.Subscription) error {
 	}
 
 	subscription.ID = primitive.NewObjectID()
+	subscription.MangaFeed = 3
 
-	subscription.LastChapterURL, _ = m.getLastMagaChapter(subscription.MangaURL)
+	subscription.LastChapterURL, _ = m.GetLastMangaChapter(subscription.MangaURL)
 
 	_, err := m.DB.MongoClient.Collection("subscription").InsertOne(m.DB.Ctx, subscription)
 	if err != nil && !strings.Contains(err.Error(), "subscription_unq") {

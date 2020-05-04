@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"go.mongodb.org/mongo-driver/bson"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
@@ -39,8 +38,13 @@ func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
 		}
 
 		for _, manga := range subs {
+			feed := NewMangaInterface(manga.MangaFeed, job.DB)
+			if feed == nil {
+				continue
+			}
+
 			// Get the last chapter for each manga
-			last, err := getMangaLastChapter(manga.MangaURL)
+			last, err := feed.GetLastMangaChapter(manga.MangaURL)
 			if err != nil || last == "" {
 				continue // LAter will decide what to do here
 			}
@@ -73,24 +77,6 @@ func onSuccess(name string, started time.Time) {
 	fmt.Printf("*** [*] CRON job '%s' finished succesfully ***", name)
 	fmt.Printf("*** [*] CRON job '%s' end time: %v ***\n", name, ended)
 	fmt.Printf("*** [*] CRON job '%s' time elapsed: %v ***\n", name, ended.Sub(started))
-}
-
-func getMangaLastChapter(titleURL string) (string, error) {
-
-	if titleURL == "" {
-		log.Println("No title supplied")
-		return "", nil
-	}
-
-	page, err := goquery.NewDocument(titleURL)
-	if err != nil {
-		log.Println("There was an error getting the page: ", err)
-		return "", err
-	}
-
-	lastChaperURL, _ := page.Find("a.chapter-name").First().Attr("href")
-
-	return lastChaperURL, nil
 }
 
 func updateLastChapter(manga *models.Subscription, job *models.Job) {

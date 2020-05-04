@@ -50,8 +50,6 @@ func (m *Manganelo) QueryManga(name string) *models.ApiQuerySuggestions {
 		return nil
 	}
 
-	log.Println("Thename to query: ", name)
-
 	res, err := http.PostForm(m.ApiURL, url.Values{"searchword": {name}})
 	if err != nil {
 		log.Println("There was an error requesting this API: ", err)
@@ -108,8 +106,9 @@ func (m *Manganelo) Subscribe(subscription *models.Subscription) error {
 	}
 
 	subscription.ID = primitive.NewObjectID()
+	subscription.MangaFeed = 2
 
-	subscription.LastChapterURL, _ = getMangaLastChapter(subscription.MangaURL)
+	subscription.LastChapterURL, _ = m.GetLastMangaChapter(subscription.MangaURL)
 
 	_, err := m.DB.MongoClient.Collection("subscription").InsertOne(m.DB.Ctx, subscription)
 	if err != nil && !strings.Contains(err.Error(), "subscription_unq") {
@@ -120,7 +119,7 @@ func (m *Manganelo) Subscribe(subscription *models.Subscription) error {
 	return nil
 }
 
-func getMangaLastChapter(titleURL string) (string, error) {
+func (m *Manganelo) GetLastMangaChapter(titleURL string) (string, error) {
 
 	if titleURL == "" {
 		log.Println("No title supplied")
