@@ -7,8 +7,8 @@ import "mangagram/models"
 var AvailableFeeds = []models.MangaFeed{
 	{
 		Code: 1,
-		Name: "MangaReader",
-		URL:  "https://mangareader.pw",
+		Name: "Manga Reader",
+		URL:  "http://manga-reader.fun",
 	},
 	{
 		Code: 2,
