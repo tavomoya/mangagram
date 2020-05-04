@@ -13,6 +13,7 @@ type Subscription struct {
 	MangaName      string
 	MangaURL       string
 	LastChapterURL string
+	MangaFeed      int
 }
 
 type FeedSubs struct {

@@ -2,7 +2,6 @@ package actions
 
 import (
 	"mangagram/actions/kissmanga"
-	"mangagram/actions/mangadex"
 	"mangagram/actions/mangaeden"
 	"mangagram/actions/manganelo"
 	"mangagram/actions/mangareader"
@@ -10,8 +9,8 @@ import (
 )
 
 // Available Manga Feeds:
-// 1- MangaReader (default)
-// 2- Manganelo
+// 1- MangaReader
+// 2- Manganelo (default)
 // 3- MangaEden
 // 4- Kissmanga
 // 5- Mangadex
@@ -22,6 +21,7 @@ type MangaFeedInterface interface {
 	QueryManga(string) *models.ApiQuerySuggestions
 	ViewManga() string
 	Subscribe(subscription *models.Subscription) error
+	GetLastMangaChapter(string) (string, error)
 }
 
 // NewMangaInterface function creates a new MangaFeedInterface interface ready
@@ -37,8 +37,8 @@ func NewMangaInterface(src int, db *models.DatabaseConfig) MangaFeedInterface {
 		return mangaeden.NewMangaeden(db)
 	case 4:
 		return kissmanga.NewKissmanga(db)
-	case 5:
-		return mangadex.NewMangadex(db)
+	// case 5:
+	// 	return mangadex.NewMangadex(db)
 	default:
 		return nil
 	}

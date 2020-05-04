@@ -75,7 +75,7 @@ func (k *Kissmanga) QueryManga(name string) *models.ApiQuerySuggestions {
 	return suggestions
 }
 
-func (k *Kissmanga) getLastMangaChapter(mangaURL string) (string, error) {
+func (k *Kissmanga) GetLastMangaChapter(mangaURL string) (string, error) {
 	if mangaURL == "" {
 		log.Println("No manga supplied")
 		return "", nil
@@ -110,8 +110,9 @@ func (k *Kissmanga) Subscribe(subscription *models.Subscription) error {
 	}
 
 	subscription.ID = primitive.NewObjectID()
+	subscription.MangaFeed = 4
 
-	subscription.LastChapterURL, _ = k.getLastMangaChapter(subscription.MangaURL)
+	subscription.LastChapterURL, _ = k.GetLastMangaChapter(subscription.MangaURL)
 
 	_, err := k.DB.MongoClient.Collection("subscription").InsertOne(k.DB.Ctx, subscription)
 	if err != nil && !strings.Contains(err.Error(), "subscription_unq") {

@@ -3,13 +3,13 @@ package mangareader
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"mangagram/models"
 	"net/http"
 	"net/url"
 
+	"github.com/PuerkitoBio/goquery"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -28,8 +28,8 @@ type MangaReader struct {
 func NewMangaReader(db *models.DatabaseConfig) *MangaReader {
 	return &MangaReader{
 		DB:           db,
-		ApiURL:       "https://mangareader.pw/search?query=%s",
-		ViewMangaURL: "https://mangareader.pw/manga/%s",
+		ApiURL:       "http://manga-reader.fun/search-autocomplete",
+		ViewMangaURL: "http://manga-reader.fun/manga/%s",
 	}
 }
 
@@ -42,14 +42,10 @@ func (m *MangaReader) QueryManga(name string) *models.ApiQuerySuggestions {
 		return nil
 	}
 
-	log.Println("Thename to query: ", name)
-
-	escapedName := url.PathEscape(name)
-
-	path := fmt.Sprintf(m.ApiURL, escapedName)
-	log.Println("the path: ", path)
-
-	res, err := http.Get(path)
+	res, err := http.PostForm(m.ApiURL, url.Values{
+		"searchword":   {name},
+		"search_style": {"tentruyen"},
+	})
 	if err != nil {
 		log.Println("There was an error requesting this API: ", err)
 		return nil
@@ -66,12 +62,22 @@ func (m *MangaReader) QueryManga(name string) *models.ApiQuerySuggestions {
 		return nil
 	}
 
+	mangas := make([]*models.MangareaderApiResponse, 0)
+	err = json.Unmarshal(body, &mangas)
+	if err != nil {
+		log.Println("There was an error trying to unmarshal response into struct: ", err)
+		return nil
+	}
+
 	suggestions := new(models.ApiQuerySuggestions)
 
-	err = json.Unmarshal(body, &suggestions)
-	if err != nil {
-		log.Println("There was an error trying to unmarshal response into a struct: ", err)
-		return nil
+	for _, manga := range mangas {
+		s := models.MangaSuggestions{}
+
+		s.Data = manga.NameUnsigned
+		s.Value = manga.Name
+
+		suggestions.Suggestions = append(suggestions.Suggestions, s)
 	}
 
 	return suggestions
@@ -101,6 +107,8 @@ func (m *MangaReader) Subscribe(subscription *models.Subscription) error {
 	}
 
 	subscription.ID = primitive.NewObjectID()
+	subscription.MangaFeed = 1
+	subscription.LastChapterURL, _ = m.GetLastMangaChapter(subscription.MangaURL)
 
 	_, err := m.DB.MongoClient.Collection("subscription").InsertOne(m.DB.Ctx, subscription)
 	if err != nil {
@@ -109,4 +117,22 @@ func (m *MangaReader) Subscribe(subscription *models.Subscription) error {
 	}
 
 	return nil
+}
+
+func (m *MangaReader) GetLastMangaChapter(titleURL string) (string, error) {
+
+	if titleURL == "" {
+		log.Println("No title supplied")
+		return "", nil
+	}
+
+	page, err := goquery.NewDocument(titleURL)
+	if err != nil {
+		log.Println("There was an error getting the page: ", err)
+		return "", err
+	}
+
+	lastChapterURL, _ := page.Find("div.chapter-list a").First().Attr("href")
+
+	return lastChapterURL, nil
 }

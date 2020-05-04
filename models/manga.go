@@ -47,3 +47,10 @@ type MangaFeed struct {
 	Name string
 	URL  string
 }
+
+type MangareaderApiResponse struct {
+	ID           int64  `json:"id"`
+	Author       string `json:"author"`
+	Name         string `json:"name"`
+	NameUnsigned string `json:"nameunsigned"`
+}
