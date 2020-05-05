@@ -119,6 +119,9 @@ func (m *Manganelo) Subscribe(subscription *models.Subscription) error {
 	return nil
 }
 
+// GetLastMangaChapter method receives the URL to a manga title and returns
+// the last chapter published in this URL. An error might be returned if
+// no URL is supplied or if it cannot connect to the URL
 func (m *Manganelo) GetLastMangaChapter(titleURL string) (string, error) {
 
 	if titleURL == "" {

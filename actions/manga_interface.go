@@ -9,8 +9,8 @@ import (
 )
 
 // Available Manga Feeds:
-// 1- MangaReader
-// 2- Manganelo (default)
+// 1- MangaReader (default)
+// 2- Manganelo
 // 3- MangaEden
 // 4- Kissmanga
 // 5- Mangadex

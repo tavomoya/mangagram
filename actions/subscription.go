@@ -10,6 +10,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// GetChatSubscriptions method returns a slice of subscriptions attached to a specific chat ID.
+// This receives a DatabaseConfig struct and a chatID parameter. It might return an error if
+// the DatabaseConfig parameter is nil or if any error is returned by querying the database.
 func GetChatSubscriptions(db *models.DatabaseConfig, chatID int64) ([]*models.Subscription, error) {
 
 	if db == nil {
@@ -33,6 +36,9 @@ func GetChatSubscriptions(db *models.DatabaseConfig, chatID int64) ([]*models.Su
 	return subs, nil
 }
 
+// RemoveMangaSubscription method deletes a subscription using the ID of said subscription.
+// This receives a DatabaseConfig struct and a subscriptionID parameter. It might return an error if
+// the DatabaseConfig parameter is nil or if any error is returned by querying the database.
 func RemoveMangaSubscription(db *models.DatabaseConfig, subscriptionID string) error {
 
 	if db == nil {
@@ -60,6 +66,11 @@ func RemoveMangaSubscription(db *models.DatabaseConfig, subscriptionID string) e
 	return nil
 }
 
+// GetChatMangaFeed method returns the Manga Feed code that a Chat is
+// currently cubscribed to. If the chat is not subscribed to any feeds
+// the method defaults to feed 1 (Manga Reader).
+// It returns 0 (invalid feed) if the DatabaseConfig parameter is nil or
+// if any unhandled errors occured while querying the collection.
 func GetChatMangaFeed(db *models.DatabaseConfig, chatID int64) int {
 
 	if db == nil {
@@ -82,6 +93,10 @@ func GetChatMangaFeed(db *models.DatabaseConfig, chatID int64) int {
 	return feed.Code
 }
 
+// AddFeedSubscription method creates a new record in the manga_feed collection for a specific Chat.
+// It checks the collection for any previous feed subscriptions, if the chat already have one it gets
+// replaced, otherwise a new subscription is created.
+// No Chat should have more than one subscription at a time.
 func AddFeedSubscription(db *models.DatabaseConfig, chatID int64, feed models.MangaFeed) error {
 
 	if db == nil {
