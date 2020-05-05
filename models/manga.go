@@ -2,18 +2,18 @@ package models
 
 // MangaSuggestions is a struct used to
 // describe a title queried by a user.
-// ---------------------------------------
-// Data: Refers to the encoded name used to access the manga page
-// Value: Is the Title of the Manga used as a message to the User.
 type MangaSuggestions struct {
-	Data  string `json:"data"`
+	// Refers to the encoded name
+	// used to access the manga page
+	Data string `json:"data"`
+
+	// Title of the manga used as a
+	// message to the user
 	Value string `json:"value"`
 }
 
 // ApiQuerySuggestions is a struct used to manage a list
 // of manga suggestions.
-// ------------------------------------------------------
-// Suggestions: Slice of MangaSuggestions
 type ApiQuerySuggestions struct {
 	Suggestions []MangaSuggestions `json:"suggestions"`
 }
@@ -22,35 +22,62 @@ type ApiQuerySuggestions struct {
 // that gets returned by the Manganelo API. Some of these
 // properties are currently unused but I'm planning on doing
 // something with them.
-// ---------------------------------------------------------
-// ID: Manganelo's internal ID for the Manga
-// IDEncode: Encoded name of the manga, used in the Manga's page
-// Name: Title of the manga
-// Author: Author of the manga
-// LastChapter: Last chapter of the manga published in Manganelo
 type ManganeloApiResponse struct {
-	ID          string `json:"id"`
-	IDEncode    string `json:"id_encode"`
-	Name        string `json:"name"`
-	Author      string `json:"author"`
+	// Manganelo's internal ID for the manga
+	ID string `json:"id"`
+
+	// Encoded name of the manga, used in the
+	// Manga's page
+	IDEncode string `json:"id_encode"`
+
+	// Title of the manga
+	Name string `json:"name"`
+
+	// Author of the manga
+	Author string `json:"author"`
+
+	// Last chapter published
 	LastChapter string `json:"lastchapter"`
 }
 
+// MangaedenApiResponse refers to the type of response
+// that gets returned by the Mangaeden's API.
 type MangaedenApiResponse struct {
+	// (unused) Mangaeden's internal label
 	Label string `json:"label"`
-	URL   string `json:"url"`
+
+	// Manga URL in Mangaeden
+	URL string `json:"url"`
+
+	// Title of the manga
 	Value string `json:"value"`
 }
 
+// MangaFeed is a struct used to
+// define feed's information internally.
 type MangaFeed struct {
+	// Assigned identifier for the feed
 	Code int
+
+	// Name of the feed
 	Name string
-	URL  string
+
+	// Feed's URL
+	URL string
 }
 
+// MangareaderApiResponse refers to the type of response
+// that gets returned by the Manga Reader's API.
 type MangareaderApiResponse struct {
-	ID           int64  `json:"id"`
-	Author       string `json:"author"`
-	Name         string `json:"name"`
+	// Manga Reader's internal ID
+	ID int64 `json:"id"`
+
+	// Author of the manga
+	Author string `json:"author"`
+
+	// Title of the manga
+	Name string `json:"name"`
+
+	// Path to the manga URL
 	NameUnsigned string `json:"nameunsigned"`
 }
