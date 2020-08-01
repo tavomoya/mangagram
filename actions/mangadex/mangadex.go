@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"mangagram/models"
 	"net/url"
 	"strings"
+
+	"github.com/tavomoya/mangagram/models"
 
 	"github.com/PuerkitoBio/goquery"
 	"go.mongodb.org/mongo-driver/bson/primitive"

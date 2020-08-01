@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"mangagram/actions"
-	"mangagram/models"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tavomoya/mangagram/actions"
+	"github.com/tavomoya/mangagram/models"
 
 	"github.com/robfig/cron"
 	"go.mongodb.org/mongo-driver/mongo"

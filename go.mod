@@ -1,9 +1,8 @@
-module mangagram
+module github.com/tavomoya/mangagram
 
 go 1.13
 
 require (
-	github.com/DataDog/zstd v1.4.4 // indirect
 	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/grokify/html-strip-tags-go v0.0.0-20190921062105-daaa06bf1aaf
 	github.com/pkg/errors v0.9.1 // indirect

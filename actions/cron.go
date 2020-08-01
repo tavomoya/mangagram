@@ -3,9 +3,10 @@ package actions
 import (
 	"fmt"
 	"log"
-	"mangagram/models"
 	"strconv"
 	"time"
+
+	"github.com/tavomoya/mangagram/models"
 
 	"go.mongodb.org/mongo-driver/bson"
 	tb "gopkg.in/tucnak/telebot.v2"

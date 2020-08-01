@@ -1,11 +1,11 @@
 package actions
 
 import (
-	"mangagram/actions/kissmanga"
-	"mangagram/actions/mangaeden"
-	"mangagram/actions/manganelo"
-	"mangagram/actions/mangareader"
-	"mangagram/models"
+	"github.com/tavomoya/mangagram/actions/kissmanga"
+	"github.com/tavomoya/mangagram/actions/mangaeden"
+	"github.com/tavomoya/mangagram/actions/manganelo"
+	"github.com/tavomoya/mangagram/actions/mangareader"
+	"github.com/tavomoya/mangagram/models"
 )
 
 // Available Manga Feeds:
