@@ -108,7 +108,7 @@ func main() {
 		
 		If you need help use the /help command.
 
-		MangaGram v0.1.0. Made with ❤️ by @tavomoya.
+		MangaGram v1.0.0. Made with ❤️ by @tavomoya.
 		`
 
 		_, err := bot.Send(m.Chat, msg, tb.ModeHTML, tb.NoPreview)
