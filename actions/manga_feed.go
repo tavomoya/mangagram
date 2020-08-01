@@ -1,6 +1,6 @@
 package actions
 
-import "mangagram/models"
+import "github.com/tavomoya/mangagram/models"
 
 // AvailableFeeds defines information for
 // all current available manga feeds.

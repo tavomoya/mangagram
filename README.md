@@ -14,8 +14,11 @@ Search for the bot in Telegram and start chatting to it. Or add it to group chat
 ## Available Commands
 
 /manga :query - Get a list of mangas that match the query
+
 /subscriptions - Get a list your current manga subscriptions
+
 /setfeed - Changed manga feed used to search mangas
+
 /help - Get help from available commands and manga feeds
 
 ## To Do

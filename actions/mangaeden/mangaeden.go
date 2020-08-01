@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"mangagram/models"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/tavomoya/mangagram/models"
 
 	"github.com/PuerkitoBio/goquery"
 	"go.mongodb.org/mongo-driver/bson/primitive"

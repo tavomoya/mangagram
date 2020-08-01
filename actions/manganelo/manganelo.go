@@ -5,10 +5,11 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
-	"mangagram/models"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/tavomoya/mangagram/models"
 
 	"github.com/PuerkitoBio/goquery"
 	strip "github.com/grokify/html-strip-tags-go"
