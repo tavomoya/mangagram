@@ -19,7 +19,7 @@ import (
 func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
 	jobName := "GetMangaUpdates"
 
-	for t := range time.NewTicker(time.Minute * 2).C {
+	for t := range time.NewTicker(time.Hour * 6).C {
 		log.Println("Running Manga Updates Goroutine...", t)
 		go func() {
 			started := time.Now()
