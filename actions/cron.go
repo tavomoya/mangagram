@@ -12,8 +12,6 @@ import (
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
-const schedule string = "@every 12h"
-
 // GetMangaUpdates function runs a CRON job every 12h.
 // The job queries the subscription collection and looks
 // for new chapters. If a new chapter is found, a message
@@ -21,7 +19,7 @@ const schedule string = "@every 12h"
 func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
 	jobName := "GetMangaUpdates"
 
-	for t := range time.NewTicker(time.Hour * 6).C {
+	for t := range time.NewTicker(time.Minute * 2).C {
 		log.Println("Running Manga Updates Goroutine...", t)
 		go func() {
 			started := time.Now()
