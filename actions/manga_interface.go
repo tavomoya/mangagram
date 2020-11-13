@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/tavomoya/mangagram/actions/kissmanga"
+	"github.com/tavomoya/mangagram/actions/mangadex"
 	"github.com/tavomoya/mangagram/actions/mangaeden"
 	"github.com/tavomoya/mangagram/actions/manganelo"
 	"github.com/tavomoya/mangagram/actions/mangareader"
@@ -37,8 +38,8 @@ func NewMangaInterface(src int, db *models.DatabaseConfig) MangaFeedInterface {
 		return mangaeden.NewMangaeden(db)
 	case 4:
 		return kissmanga.NewKissmanga(db)
-	// case 5:
-	// 	return mangadex.NewMangadex(db)
+	case 5:
+		return mangadex.NewMangadex(db)
 	default:
 		return nil
 	}
