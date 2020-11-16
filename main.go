@@ -103,6 +103,7 @@ func main() {
 		- Manganelo (https://manganelo.com)
 		- Mangaeden (https://mangaeden.com)
 		- Kissmanga (https://kissmanga.com)
+		- Mangadex (https://mangadex.org)
 
 		You can set your favorite one using the /setfeed command.
 		
@@ -306,6 +307,7 @@ func main() {
 		- Manganelo (https://manganelo.com)
 		- Mangaeden (https://mangaeden.com)
 		- Kissmanga (https://kissmanga.com)
+		- Mangadex (https://mangadex.org)
 
 		You can set your favorite one using the /setfeed command.
 		`
