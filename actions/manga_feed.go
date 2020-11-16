@@ -25,9 +25,9 @@ var AvailableFeeds = []models.MangaFeed{
 		Name: "Kissmanga",
 		URL:  "https://kissmanga.org",
 	},
-	// {
-	// 	Code: 5,
-	// 	Name: "Mangadex",
-	// 	URL:  "https://mangadex.org",
-	// },
+	{
+		Code: 5,
+		Name: "Mangadex",
+		URL:  "https://mangadex.org",
+	},
 }
