@@ -5,7 +5,8 @@
 - [x] Command to show current subscriptions
 - [x] Delete a subscription
 - [x] Choose different manga feeds
-- [ ] Include Mangadex as a feed
+- [x] Include Mangadex as a feed
+- [ ] Testing
 - [ ] Include Mangaplus as a feed
 - [ ] Multilanguage sources 
 

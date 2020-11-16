@@ -12,8 +12,8 @@ import (
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
-// GetMangaUpdates function runs a CRON job every 12h.
-// The job queries the subscription collection and looks
+// GetMangaUpdates function runs a goroutine every 6h.
+// The goroutine queries the subscription collection and looks
 // for new chapters. If a new chapter is found, a message
 // is sent to the Chat that got subscribed to the title.
 func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
