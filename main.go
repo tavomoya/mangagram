@@ -12,7 +12,6 @@ import (
 	"github.com/tavomoya/mangagram/actions"
 	"github.com/tavomoya/mangagram/models"
 
-	"github.com/robfig/cron"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	tb "gopkg.in/tucnak/telebot.v2"
@@ -48,6 +47,8 @@ func main() {
 		port = "9000"
 	}
 
+	log.Println("wwtf", port)
+
 	listen := fmt.Sprintf(":%s", port)
 
 	db, err := getMongoClient(conn)
@@ -76,8 +77,7 @@ func main() {
 	}
 
 	jobs := &models.Job{
-		Cron: cron.New(),
-		DB:   dbConfig,
+		DB: dbConfig,
 	}
 
 	// Run Jobs

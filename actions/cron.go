@@ -18,6 +18,7 @@ import (
 // is sent to the Chat that got subscribed to the title.
 func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
 	jobName := "GetMangaUpdates"
+	log.Println("GetMangaUpdates func")
 
 	for t := range time.NewTicker(6 * time.Hour).C {
 		log.Println("Running Manga Updates Goroutine...", t)
