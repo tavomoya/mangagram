@@ -76,6 +76,13 @@ func main() {
 		log.Fatal("there was an error creating the bot: ", err)
 	}
 
+	jobs := &models.Job{
+		DB: dbConfig,
+	}
+
+	// Run Jobs
+	go actions.GetMangaUpdates(jobs, bot)
+
 	// Available commands:
 
 	bot.Handle("/start", func(m *tb.Message) {
@@ -313,10 +320,4 @@ func main() {
 
 	bot.Start()
 
-	jobs := &models.Job{
-		DB: dbConfig,
-	}
-
-	// Run Jobs
-	actions.GetMangaUpdates(jobs, bot)
 }
