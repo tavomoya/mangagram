@@ -5,7 +5,7 @@
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/tavomoya/mangagram)](https://pkg.go.dev/github.com/tavomoya/mangagram) 
 
-<a href="buymeacoff.ee/tavomoya" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee" style="height: auto !important; width: auto !important;" ></a>
+<a href="https://buymeacoff.ee/tavomoya" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee" style="height: auto !important; width: auto !important;" ></a>
 
 A Telegram bot for new manga chapter alerts. Search for your favorite titles and subscribe to them for alerts.
 
