@@ -47,8 +47,6 @@ func main() {
 		port = "9000"
 	}
 
-	log.Println("wwtf", port)
-
 	listen := fmt.Sprintf(":%s", port)
 
 	db, err := getMongoClient(conn)
