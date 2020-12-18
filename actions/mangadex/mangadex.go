@@ -19,7 +19,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Mangaeden is a struct used to attach
+// Mangadex is a struct used to attach
 // all functionality available within this
 // manga source
 type Mangadex struct {
@@ -29,7 +29,7 @@ type Mangadex struct {
 	client       *http.Client
 }
 
-// NewMangaeden function returns a pointer to a Mangaeden
+// NewMangadex function returns a pointer to a Mangadex
 // struct that can be used to call all of its methods
 func NewMangadex(db *models.DatabaseConfig) *Mangadex {
 	jar, _ := cookiejar.New(nil)
@@ -162,6 +162,7 @@ func (m *Mangadex) Subscribe(subscription *models.Subscription) error {
 	}
 
 	subscription.ID = primitive.NewObjectID()
+	subscription.MangaFeed = 5
 
 	subscription.LastChapterURL, _ = m.GetLastMangaChapter(subscription.MangaURL)
 
