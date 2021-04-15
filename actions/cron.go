@@ -43,7 +43,7 @@ func GetMangaUpdates(job *models.Job, bot *tb.Bot) {
 
 				// Get the last chapter for each manga
 				last, err := feed.GetLastMangaChapter(manga.MangaURL)
-				if err != nil || last == "" {
+				if err != nil || last == "" || last == fmt.Sprintf(feed.ViewManga(), "") {
 					continue // LAter will decide what to do here
 				}
 
