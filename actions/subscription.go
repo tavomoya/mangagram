@@ -18,7 +18,7 @@ func GetChatSubscriptions(db *models.DatabaseConfig, chatID int64) ([]*models.Su
 
 	if db == nil {
 		log.Println("The DB model is nil")
-		return nil, errors.New("The DB model passed is nil, can't operate")
+		return nil, errors.New("the DB model passed is nil, can't operate")
 	}
 
 	cursor, err := db.MongoClient.Collection("subscription").Find(db.Ctx, bson.M{"chatid": chatID})
@@ -108,7 +108,7 @@ func AddFeedSubscription(db *models.DatabaseConfig, chatID int64, feed models.Ma
 	// Validate chat ID
 	if chatID == 0 {
 		log.Println("ChatID can't be 0")
-		return errors.New("No Chat supplied for feed subscription")
+		return errors.New("no Chat supplied for feed subscription")
 	}
 
 	sub := models.FeedSubs{
