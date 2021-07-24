@@ -18,7 +18,7 @@ func GetChatSubscriptions(db *models.DatabaseConfig, chatID int64) ([]*models.Su
 
 	if db == nil {
 		log.Println("The DB model is nil")
-		return nil, errors.New("The DB model passed is nil, can't operate")
+		return nil, errors.New("the DB model passed is nil, can't operate")
 	}
 
 	cursor, err := db.MongoClient.Collection("subscription").Find(db.Ctx, bson.M{"chatid": chatID})
