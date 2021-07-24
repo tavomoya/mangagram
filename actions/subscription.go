@@ -108,7 +108,7 @@ func AddFeedSubscription(db *models.DatabaseConfig, chatID int64, feed models.Ma
 	// Validate chat ID
 	if chatID == 0 {
 		log.Println("ChatID can't be 0")
-		return errors.New("No Chat supplied for feed subscription")
+		return errors.New("no Chat supplied for feed subscription")
 	}
 
 	sub := models.FeedSubs{
