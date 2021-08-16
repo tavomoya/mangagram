@@ -110,7 +110,21 @@ func (m *Mangaeden) GetLastMangaChapter(mangaURL string) (string, error) {
 		return "", nil
 	}
 
-	page, err := goquery.NewDocument(mangaURL)
+	req, err := http.NewRequest("GET", mangaURL, nil)
+	if err != nil {
+		log.Println("There was an error requesting Kissmanga page: ", err)
+		return "", err
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Println("Error calling HTTP URL: ", err)
+		return "", err
+	}
+
+	defer res.Body.Close()
+
+	page, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		log.Println("There was an error getting the manga page: ", err)
 		return "", err
@@ -130,12 +144,12 @@ func (m *Mangaeden) Subscribe(subscription *models.Subscription) error {
 	// Validate subscription data
 	if subscription.MangaName == "" || subscription.MangaURL == "" {
 		log.Println("No manga supplied for subscription")
-		return errors.New("No manga supplied for subscription")
+		return errors.New("no manga supplied for subscription")
 	}
 
 	if subscription.ChatID == 0 {
 		log.Println("No Chat supplied for subscription")
-		return errors.New("No Chat supplied for subscription")
+		return errors.New("no Chat supplied for subscription")
 	}
 
 	subscription.ID = primitive.NewObjectID()
